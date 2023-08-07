@@ -1,4 +1,4 @@
-const transformToOperationEntity = (row) => {
+const transformToOperationEntity = (schema) => {
   const {
     id,
     name,
@@ -7,7 +7,7 @@ const transformToOperationEntity = (row) => {
     allows_rework,
     is_batch,
     batch_size_parameter
-  } = row
+  } = schema
 
   const operation = {
     id,
