@@ -1,0 +1,22 @@
+{
+  "name": "planta",
+  "version": "1.0.0",
+  "private": "true",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "pino-pretty": "^10.2.0"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.3.0",
+    "better-sqlite3": "^8.5.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^4.21.0",
+    "fastify-plugin": "^4.5.1",
+    "ulidx": "^2.1.0"
+  }
+}
