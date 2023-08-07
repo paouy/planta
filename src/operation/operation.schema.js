@@ -29,8 +29,6 @@ const mapToOperationSchema = (data) => {
     schema.batch_size_parameter = data.batchSizeParameter
   }
 
-  console.log(JSON.stringify(schema, null, 2))
-
   return schema
 }
 
