@@ -5,13 +5,13 @@ const transformToEquipmentEntity = (schema) => {
     operation_ids
   } = schema
 
-  const operation = {
+  const equipment = {
     id,
     name,
-    operation_ids: JSON.parse(operation_ids)
+    operationIds: JSON.parse(operation_ids)
   }
 
-  return operation
+  return equipment
 }
 
 export {
