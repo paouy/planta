@@ -13,6 +13,7 @@ const transformToMaterialEntity = (schema) => {
     id,
     sku,
     name,
+    normalizedName: `[${sku}] ${name}`,
     category: {
       id: category_id
     },
