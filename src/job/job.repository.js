@@ -92,8 +92,58 @@ const findAllByProductionOrderId = (productionOrderId) => {
 }
 
 const findAllByOperationBatchId = (operationBatchId) => {
-  // Implement operationBatchJob first
-  return []
+  const statement = sql(`
+    select
+      j.id,
+      j.seq,
+      j.production_order_id,
+      j.operation_id,
+      j.workstation_id,
+      j.status,
+      j.qty_output,
+      j.qty_reject,
+      j.qty_rework,
+      j.time_taken_mins,
+      po.public_id as production_order_public_id,
+      o.name as operation_name,
+      o.time_per_cycle_mins as operation_time_per_cycle_mins,
+      o.is_batch as operation_is_batch,
+      w.name as workstation_name,
+      (pj.qty_output - pj.qty_reject + pj.qty_rework) as qty_input
+    from
+      jobs j
+    inner join
+      operation_batch_jobs obj
+    on
+      j.id = obj.job_id
+    and
+      obj.operation_batch_id = ?
+    join
+      production_orders po
+    on
+      j.production_order_id = po.id
+    join
+      operations o
+    on
+      j.operation_id = o.id
+    join
+      workstations w
+    on
+      j.workstation_id = w.id
+    left join
+      jobs pj
+    on
+      j.production_order_id = pj.production_order_id
+    and
+      j.seq = pj.seq + 1
+    order by
+      po.priority,
+      po.id
+  `)
+
+  const results = statement.all(operationBatchId)
+
+  return results
 }
 
 const findAllWithProductionOrderNotReleased = ()=> {
