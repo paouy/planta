@@ -3,6 +3,7 @@ import { DB_PATH } from './config.js'
 
 const db = new Database(DB_PATH)
 const sql = db.prepare.bind(db)
+const txn = db.transaction.bind(db)
 
 const setValues = (data) => {
   const columns = Object.keys(data).filter(key => key !== 'id')
@@ -12,5 +13,6 @@ const setValues = (data) => {
 
 export {
   sql,
+  txn,
   setValues
 }
