@@ -24,3 +24,7 @@ export const updateOne = (data) => {
 export const deleteOne = (id) => {
   return materialRepository.deleteOne(id)
 }
+
+export const increment = (data) => {
+  return materialRepository.incrementQtyAvailable(data)
+}

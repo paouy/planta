@@ -25,6 +25,10 @@ const mapToMaterialSchema = (data) => {
     schema.qty_available = Number(data.qtyAvailable)
   }
 
+  if (!data.id) {
+    schema.qty_available = 0
+  }
+
   return schema
 }
 

@@ -6,7 +6,8 @@ const transformToMaterialEntity = (schema) => {
     sku,
     name,
     uom,
-    qty_available
+    qty_available,
+    qty_allocated = 0
   } = schema
 
   const material = {
@@ -18,7 +19,8 @@ const transformToMaterialEntity = (schema) => {
       id: category_id
     },
     uom,
-    qtyAvailable: Number(qty_available)
+    qtyAvailable: Number(qty_available),
+    qtyAllocated: Number(qty_allocated)
   }
 
   if (category_name) {
