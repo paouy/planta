@@ -1,7 +1,7 @@
 const mapToProductMaterialSchema = (data) => {
   const schema = {
     product_id: data.productId,
-    material_id: data.id
+    material_id: data.material.id
   }
 
   if ('qty' in data) {

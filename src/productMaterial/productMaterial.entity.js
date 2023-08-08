@@ -11,10 +11,12 @@ const transformToProductMaterialEntity = (schema) => {
 
   const productMaterial = {
     productId: product_id,
-    id,
-    normalizedName: `[${sku}] ${name}`,
-    categoryName: category_name,
-    uom,
+    material: {
+      id,
+      normalizedName: `[${sku}] ${name}`,
+      categoryName: category_name,
+      uom,
+    },
     qty: Number(qty)
   }
 
