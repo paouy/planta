@@ -29,6 +29,10 @@ const mapToOperationSchema = (data) => {
     schema.batch_size_parameter = data.batchSizeParameter
   }
 
+  if (data.isBatch === false) {
+    schema.batch_size_parameter = null
+  }
+
   return schema
 }
 
