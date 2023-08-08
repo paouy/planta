@@ -1,4 +1,5 @@
 import fastifyPlugin from 'fastify-plugin'
+import { allocationRoutes } from './allocation/index.js'
 import { categoryRoutes } from './category/index.js'
 import { customerRoutes } from './customer/index.js'
 import { equipmentRoutes } from './equipment/index.js'
@@ -16,6 +17,7 @@ import { salesOrderItemRoutes } from './salesOrderItem/index.js'
 import { workstationRoutes } from './workstation/index.js'
 
 export default fastifyPlugin((app, options, done) => {
+  app.register(allocationRoutes, { prefix: '/api/v1/allocations' })
   app.register(categoryRoutes, { prefix: '/api/v1/categories' })
   app.register(customerRoutes, { prefix: '/api/v1/customers' })
   app.register(equipmentRoutes, { prefix: '/api/v1/equipments' })
