@@ -9,6 +9,7 @@ import { operationBatchRoutes } from './operationBatch/index.js'
 import { operationBatchJobRoutes } from './operationBatchJob/index.js'
 import { productRoutes } from './product/index.js'
 import { productionOrderRoutes } from './productionOrder/index.js'
+import { productionRecordRoutes } from './productionRecord/index.js'
 import { productMaterialRoutes } from './productMaterial/index.js'
 import { salesOrderRoutes } from './salesOrder/index.js'
 import { salesOrderItemRoutes } from './salesOrderItem/index.js'
@@ -25,6 +26,7 @@ export default fastifyPlugin((app, options, done) => {
   app.register(operationBatchJobRoutes, { prefix: '/api/v1/operation-batch-jobs' })
   app.register(productRoutes, { prefix: '/api/v1/products' })
   app.register(productionOrderRoutes, { prefix: '/api/v1/production-orders' })
+  app.register(productionRecordRoutes, { prefix: '/api/v1/production-records' })
   app.register(productMaterialRoutes, { prefix: '/api/v1/product-materials' })
   app.register(salesOrderRoutes, { prefix: '/api/v1/sales-orders' })
   app.register(salesOrderItemRoutes, { prefix: '/api/v1/sales-order-items' })
