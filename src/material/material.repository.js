@@ -86,6 +86,9 @@ const findAll = () => {
       po.is_released = 0
     and
       po.status != 'CANCELLED'
+    group by
+      c.name,
+      m.id
     order by
       m.name,
       c.name
