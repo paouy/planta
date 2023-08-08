@@ -17,10 +17,33 @@ const insertOne = (data) => {
         @operation_id
       )
     returning
-      *
+      id
   `)
   
-  const result = statement.get(data)
+  const { id } = statement.get(data)
+  const result = findOne(id)
+
+  return result
+}
+
+const findOne = (id) => {
+  const statement = sql(`
+    select
+      w.id,
+      w.name,
+      w.operation_id,
+      o.name as operation_name
+    from
+      workstations w
+    join
+      operations o
+    on
+      w.operation_id = o.id
+    where
+      w.id = ?
+  `)
+
+  const result = statement.get(id)
 
   return result
 }
@@ -39,8 +62,8 @@ const findAll = () => {
     on
       w.operation_id = o.id
     order by
-      w.name,
-      o.seq
+      o.seq,
+      w.name
   `)
 
   const results = statement.all()
