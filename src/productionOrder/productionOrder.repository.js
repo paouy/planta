@@ -99,6 +99,8 @@ const findAllNotReleased = () => {
       po.sales_order_item_id = soi.id
     where
       po.is_released = 0
+    order by
+      po.priority
   `)
 
   const results = statement.all()
@@ -135,6 +137,8 @@ const findAllNotReleasedByProductId = (productId) => {
       po.is_released = 0
     and
       po.product_id = ?
+    order by
+      po.id
   `)
 
   const results = statement.all(productId)
@@ -169,6 +173,8 @@ const findAllReleased = () => {
       po.sales_order_item_id = soi.id
     where
       po.is_released = 1
+    order by
+      po.id
   `)
 
   const results = statement.all()
