@@ -30,3 +30,7 @@ export const updateOne = (data) => {
 export const deleteOne = (id) => {
   return productRepository.deleteOne(id)
 }
+
+export const increment = (data) => {
+  return productRepository.incrementQtyAvailable(data)
+}

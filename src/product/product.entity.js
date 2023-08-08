@@ -7,7 +7,9 @@ const transformToProductEntity = (schema) => {
     name,
     operation_ids,
     uom,
-    qty_available
+    qty_available,
+    qty_wip = 0,
+    qty_allocated = 0
   } = schema
 
   const product = {
@@ -20,7 +22,9 @@ const transformToProductEntity = (schema) => {
       id: category_id
     },
     uom,
-    qtyAvailable: Number(qty_available)
+    qtyAvailable: Number(qty_available),
+    qtyWip: Number(qty_wip),
+    qtyAllocated: Number(qty_allocated)
   }
 
   if (category_name) {

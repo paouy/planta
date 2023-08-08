@@ -25,10 +25,11 @@ const insertOne = (data) => {
         @qty_available
       )
     returning
-      *
+      id
   `)
   
-  const result = statement.get(data)
+  const { id } = statement.get(data)
+  const result = findOne(id)
 
   return result
 }
@@ -102,12 +103,28 @@ const deleteOne = (id) => {
   return result
 }
 
+const incrementQtyAvailable = (data) => {
+  const statement = sql(`
+    update
+      products
+    set
+      qty_available = qty_available + @qty
+    where
+      id = @id
+  `)
+
+  const result = statement.run(data)
+
+  return result
+}
+
 export const createProductRepository = () => {
   return {
     insertOne,
     findOne,
     findAll,
     updateOne,
-    deleteOne
+    deleteOne,
+    incrementQtyAvailable
   }
 }

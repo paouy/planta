@@ -33,3 +33,11 @@ export const deleteOne = (request, reply) => {
 
   return reply.code(204).send()
 }
+
+export const increment = (request, reply) => {
+  const { id } = request.params
+  const { qty } = request.body
+  productService.increment({ id, qty })
+
+  return reply.code(204).send()
+}
