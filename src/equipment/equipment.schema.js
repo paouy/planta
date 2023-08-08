@@ -9,8 +9,8 @@ const mapToEquipmentSchema = (data) => {
     schema.name = data.name
   }
 
-  if ('operation_ids' in data) {
-    schema.operation_ids = JSON.stringify(data.operation_ids)
+  if ('operationIds' in data) {
+    schema.operation_ids = JSON.stringify(data.operationIds)
   }
 
   return schema
