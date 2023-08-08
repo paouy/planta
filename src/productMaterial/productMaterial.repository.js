@@ -43,12 +43,14 @@ const findAllByProductId = (productId) => {
       categories c
     on
       m.category_id = c.id
+    where
+      pm.product_id = ?
     order by
       m.name,
       c.name
   `)
 
-  const results = statement.all()
+  const results = statement.all(productId)
 
   return results
 }
