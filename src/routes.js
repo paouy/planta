@@ -6,6 +6,7 @@ import { jobRoutes } from './job/index.js'
 import { materialRoutes } from './material/index.js'
 import { operationRoutes } from './operation/index.js'
 import { operationBatchRoutes } from './operationBatch/index.js'
+import { operationBatchJobRoutes } from './operationBatchJob/index.js'
 import { productRoutes } from './product/index.js'
 import { productionOrderRoutes } from './productionOrder/index.js'
 import { productMaterialRoutes } from './productMaterial/index.js'
@@ -21,6 +22,7 @@ export default fastifyPlugin((app, options, done) => {
   app.register(materialRoutes, { prefix: '/api/v1/materials' })
   app.register(operationRoutes, { prefix: '/api/v1/operations' })
   app.register(operationBatchRoutes, { prefix: '/api/v1/operation-batches' })
+  app.register(operationBatchJobRoutes, { prefix: '/api/v1/operation-batch-jobs' })
   app.register(productRoutes, { prefix: '/api/v1/products' })
   app.register(productionOrderRoutes, { prefix: '/api/v1/production-orders' })
   app.register(productMaterialRoutes, { prefix: '/api/v1/product-materials' })
