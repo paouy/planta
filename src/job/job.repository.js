@@ -46,6 +46,7 @@ const findAllByProductionOrderId = (productionOrderId) => {
       j.qty_shortfall,
       j.time_taken_mins,
       po.public_id as production_order_public_id,
+      po.qty as qty_demand,
       o.name as operation_name,
       o.time_per_cycle_mins as operation_time_per_cycle_mins,
       o.is_batch as operation_is_batch,
@@ -97,6 +98,10 @@ const findAllByOperationBatchId = (operationBatchId) => {
       j.qty_shortfall,
       j.time_taken_mins,
       po.public_id as production_order_public_id,
+      po.qty as qty_demand,
+      p.sku as product_sku,
+      p.name as product_name,
+      p.uom as product_uom,
       o.name as operation_name,
       o.time_per_cycle_mins as operation_time_per_cycle_mins,
       o.is_batch as operation_is_batch,
@@ -114,6 +119,10 @@ const findAllByOperationBatchId = (operationBatchId) => {
       production_orders po
     on
       j.production_order_id = po.id
+    join
+      products p
+    on
+      p.id = po.product_id
     join
       operations o
     on
@@ -153,17 +162,26 @@ const findAllWithProductionOrderNotReleased = ()=> {
       j.qty_shortfall,
       j.time_taken_mins,
       po.public_id as production_order_public_id,
+      po.qty as qty_demand,
+      p.sku as product_sku,
+      p.name as product_name,
+      p.uom as product_uom,
       o.name as operation_name,
       o.time_per_cycle_mins as operation_time_per_cycle_mins,
       o.is_batch as operation_is_batch,
       w.name as workstation_name,
-      (pj.qty_output - pj.qty_reject + pj.qty_rework) as qty_input
+      (pj.qty_output - pj.qty_reject + pj.qty_rework) as qty_input,
+      obj.operation_batch_id
     from
       jobs j
     join
       production_orders po
     on
       j.production_order_id = po.id
+    join
+      products p
+    on
+      p.id = po.product_id
     join
       operations o
     on
@@ -178,6 +196,16 @@ const findAllWithProductionOrderNotReleased = ()=> {
       j.production_order_id = pj.production_order_id
     and
       j.seq = pj.seq + 1
+    left join
+      operation_batch_jobs obj
+    on
+      j.id = obj.job_id
+    left join
+      operation_batches ob
+    on
+      obj.operation_batch_id = ob.id
+    and
+      ob.status != 'CLOSED'
     where
       po.is_released = 0
     order by

@@ -3,9 +3,13 @@ const transformToJobEntity = (schema) => {
     id,
     seq,
     production_order_id,
+    product_sku,
+    product_name,
+    product_uom,
     operation_id,
     workstation_id,
     status,
+    qty_demand,
     qty_input,
     qty_output,
     qty_reject,
@@ -16,7 +20,8 @@ const transformToJobEntity = (schema) => {
     operation_name,
     operation_time_per_cycle_mins,
     operation_is_batch,
-    workstation_name
+    workstation_name,
+    operation_batch_id
   } = schema
 
   const job = {
@@ -32,13 +37,12 @@ const transformToJobEntity = (schema) => {
     },
     workstation: null,
     status,
-    qtyInput: Number(qty_input),
+    qtyInput: Number(seq) > 1 ? Number(qty_input) : Number(qty_demand),
     qtyOutput: Number(qty_output),
     qtyReject: Number(qty_reject),
     qtyRework: Number(qty_rework),
     qtyShortfall: Number(qty_shortfall),
-    timeTakenMins: Number(time_taken_mins),
-    timeEstimatedMins: Number(qty_input) * Number(operation_time_per_cycle_mins)
+    timeTakenMins: Number(time_taken_mins)
   }
 
   if (workstation_id && workstation_name) {
@@ -50,6 +54,19 @@ const transformToJobEntity = (schema) => {
 
   if (operation_is_batch) {
     job.timeEstimatedMins = operation_time_per_cycle_mins
+  } else {
+    job.timeEstimatedMins = job.qtyInput * Number(operation_time_per_cycle_mins)
+  }
+
+  if (product_sku && product_name && product_uom) {
+    job.product = {
+      normalizedName: `[${product_sku}] ${product_name}`,
+      uom: product_uom
+    }
+  }
+
+  if (operation_batch_id) {
+    job.operationBatchId = operation_batch_id
   }
 
   return job
