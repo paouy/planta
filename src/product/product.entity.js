@@ -19,16 +19,13 @@ const transformToProductEntity = (schema) => {
     normalizedName: `[${sku}] ${name}`,
     operationIds: JSON.parse(operation_ids),
     category: {
-      id: category_id
+      id: category_id,
+      name: category_name
     },
     uom,
     qtyAvailable: Number(qty_available),
     qtyWip: Number(qty_wip),
     qtyAllocated: Number(qty_allocated)
-  }
-
-  if (category_name) {
-    product.category.name = category_name
   }
 
   return product
