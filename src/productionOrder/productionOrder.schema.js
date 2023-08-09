@@ -40,7 +40,7 @@ const mapToProductionOrderSchema = (data) => {
   if (!data.id) {
     schema.status = 'OPEN'
     schema.is_released = 0
-    schema.sales_order_item_id = null
+    schema.sales_order_item_id = data.salesOrderItemId || null
   }
 
   return schema

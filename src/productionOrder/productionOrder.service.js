@@ -1,10 +1,28 @@
+import { productService } from '../product/index.js'
+import { jobService } from '../job/index.js'
 import { createProductionOrderRepository } from './productionOrder.repository.js'
 import { transformToProductionOrderEntity } from './productionOrder.entity.js'
 
 const productionOrderRepository = createProductionOrderRepository()
 
 export const createOne = (data) => {
+  const lastPriorityProductionOrder = productionOrderRepository
+    .findLastPriorityNotReleased()
+
+  data.priority = (lastPriorityProductionOrder?.priority || 0) + 1000
+  
   const productionOrder = productionOrderRepository.insertOne(data)
+
+  const product = productService.getOne(data.product.id)
+
+  const jobsData = product.operationIds.map((operationId, index) => ({
+    productionOrder: { id: productionOrder.id },
+    operation: { id: operationId },
+    status: 'OPEN',
+    seq: index + 1
+  }))
+
+  jobService.createMany(jobsData)
 
   return transformToProductionOrderEntity(productionOrder)
 }
@@ -18,7 +36,7 @@ export const getOne = (id) => {
 export const getAllNotReleased = () => {
   const productionOrders = productionOrderRepository
     .findAllNotReleased()
-    .map(transformToProductionOrderEntity)
+    .map((data, index) => transformToProductionOrderEntity({ ...data, seq: index + 1 }))
 
   return productionOrders
 }

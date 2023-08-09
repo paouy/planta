@@ -51,23 +51,50 @@ const findOne = (id) => {
       po.sales_order_item_id,
       p.sku as product_sku,
       p.name as product_name,
-      p.uom as product_uom,
-      soi.public_id as sales_order_item_public_id
+      p.uom as product_uom
     from
       production_orders po
     join
       products p
     on
       po.product_id = p.id
-    left join
-      sales_order_items soi
-    on
-      po.sales_order_item_id = soi.id
     where
       po.id = ?
   `)
 
   const result = statement.get(id)
+
+  return result
+}
+
+const findLastPriorityNotReleased = () => {
+  const statement = sql(`
+    select
+      po.id,
+      po.public_id,
+      po.product_id,
+      po.status,
+      po.qty,
+      po.priority,
+      po.due_date,
+      po.sales_order_item_id,
+      p.sku as product_sku,
+      p.name as product_name,
+      p.uom as product_uom
+    from
+      production_orders po
+    join
+      products p
+    on
+      po.product_id = p.id
+    order by
+      po.priority desc,
+      po.id desc
+    limit
+      1
+  `)
+
+  const result = statement.get()
 
   return result
 }
@@ -85,18 +112,13 @@ const findAllNotReleased = () => {
       po.sales_order_item_id,
       p.sku as product_sku,
       p.name as product_name,
-      p.uom as product_uom,
-      soi.public_id as sales_order_item_public_id
+      p.uom as product_uom
     from
       production_orders po
     join
       products p
     on
       po.product_id = p.id
-    left join
-      sales_order_items soi
-    on
-      po.sales_order_item_id = soi.id
     where
       po.is_released = 0
     order by  
@@ -122,18 +144,13 @@ const findAllNotReleasedByProductId = (productId) => {
       po.sales_order_item_id,
       p.sku as product_sku,
       p.name as product_name,
-      p.uom as product_uom,
-      soi.public_id as sales_order_item_public_id
+      p.uom as product_uom
     from
       production_orders po
     join
       products p
     on
       po.product_id = p.id
-    left join
-      sales_order_items soi
-    on
-      po.sales_order_item_id = soi.id
     where
       po.is_released = 0
     and
@@ -160,18 +177,13 @@ const findAllReleased = () => {
       po.sales_order_item_id,
       p.sku as product_sku,
       p.name as product_name,
-      p.uom as product_uom,
-      soi.public_id as sales_order_item_public_id
+      p.uom as product_uom
     from
       production_orders po
     join
       products p
     on
       po.product_id = p.id
-    left join
-      sales_order_items soi
-    on
-      po.sales_order_item_id = soi.id
     where
       po.is_released = 1
     order by
@@ -203,6 +215,7 @@ export const createProductionOrderRepository = () => {
   return {
     insertOne,
     findOne,
+    findLastPriorityNotReleased,
     findAllNotReleased,
     findAllNotReleasedByProductId,
     findAllReleased,
