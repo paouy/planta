@@ -10,24 +10,14 @@ const insertMany = (data) => {
         id,
         production_order_id,
         operation_id,
-        workstation_id,
         status,
-        qty_output,
-        qty_reject,
-        qty_rework,
-        time_taken_mins,
         seq
       )
       values (
         @id,
         @production_order_id,
         @operation_id,
-        @workstation_id,
         @status,
-        @qty_output,
-        @qty_reject,
-        @qty_rework,
-        @time_taken_mins,
         @seq
       )
   `)
