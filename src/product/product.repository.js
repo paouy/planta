@@ -36,6 +36,18 @@ const insertOne = (data) => {
 
 const findOne = (id) => {
   const statement = sql(`
+    with
+      production as (
+        select
+          sum(po.qty) as qty
+        from
+          production_orders po
+        where
+          po.is_released = false
+        and
+          po.product_id = @id
+      )
+
     select
       p.id,
       p.category_id,
@@ -44,24 +56,44 @@ const findOne = (id) => {
       p.operation_ids,
       p.uom,
       p.qty_available,
-      c.name as category_name
+      c.name as category_name,
+      prd.qty as qty_wip
     from
       products p
     join
       categories c
     on
       p.category_id = c.id
+    left join
+      production prd
+    on
+      true
     where
-      p.id = ?
+      p.id = @id
   `)
 
-  const result = statement.get(id)
+  const result = statement.get({ id })
 
   return result
 }
 
 const findAll = () => {
   const statement = sql(`
+    with
+      production as (
+        select
+          sum(qty) as qty,
+          product_id
+        from
+          production_orders
+        where
+          is_released = false
+        and
+          status != 'CANCELLED'
+        group by
+          product_id
+      )
+
     select
       p.id,
       p.category_id,
@@ -70,13 +102,18 @@ const findAll = () => {
       p.operation_ids,
       p.uom,
       p.qty_available,
-      c.name as category_name
+      c.name as category_name,
+      prd.qty as qty_wip
     from
       products p
     join
       categories c
     on
       p.category_id = c.id
+    left join
+      production prd
+    on
+      p.id = prd.product_id
     order by
       p.name,
       c.name
