@@ -33,6 +33,10 @@ const mapToJobSchema = (data) => {
     schema.qty_rework = Number(data.qtyRework)
   }
 
+  if ('qtyShortfall' in data) {
+    schema.qty_shortfall = Number(data.qtyShortfall)
+  }
+
   if ('timeTakenMins' in data) {
     schema.time_taken_mins = Number(data.timeTakenMins)
   }

@@ -10,6 +10,7 @@ const transformToJobEntity = (schema) => {
     qty_output,
     qty_reject,
     qty_rework,
+    qty_shortfall,
     time_taken_mins,
     production_order_public_id,
     operation_name,
@@ -35,6 +36,7 @@ const transformToJobEntity = (schema) => {
     qtyOutput: Number(qty_output),
     qtyReject: Number(qty_reject),
     qtyRework: Number(qty_rework),
+    qtyShortfall: Number(qty_shortfall),
     timeTakenMins: Number(time_taken_mins),
     timeEstimatedMins: Number(qty_input) * Number(operation_time_per_cycle_mins)
   }
