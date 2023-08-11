@@ -1,4 +1,5 @@
 import { jobService } from '../job/index.js'
+import { productionOrderService } from '../productionOrder/index.js'
 import { productionRecordService } from '../productionRecord/index.js'
 import { createOperationBatchRepository } from './operationBatch.repository.js'
 import { transformToOperationBatchEntity } from './operationBatch.entity.js'
@@ -38,17 +39,30 @@ export const start = (id) => {
 
   operationBatchRepository.updateOne({ id, status })
 
-  const operationBatchJobs = jobService
-    .getAllByOperationBatch(id)
-    .map(job => ({ id: job.id, status }))
+  const operationBatchJobs = jobService.getAllByOperationBatch(id)
 
-  jobService.updateMany(operationBatchJobs)
+  const updatedJobs = operationBatchJobs.map(job => ({ id: job.id, status }))
+  jobService.updateMany(updatedJobs)
+
+  operationBatchJobs
+    .filter(job => job.status !== status)
+    .forEach(job => productionOrderService.updateOne({ id: job.productionOrder.id, status }))
 }
 
 export const createReport = async ({ id, productionRecords, ...metadata }) => {
   for (const { requiresRework, ...data } of productionRecords) {
     const productionRecord = { ...data, ...metadata }
     productionRecordService.createOne(productionRecord, requiresRework)
+
+    if (requiresRework) {
+      const job = {
+        productionOrder: { id: productionRecord.productionOrderId },
+        operation: { id: metadata.operation.id },
+        workstation: null
+      }
+
+      jobService.updateOneByProductionOrderAndOperation(job)
+    }
   }
 
   operationBatchRepository.updateOne({ id, status: 'CLOSED' })

@@ -42,6 +42,7 @@ const findOne = (id) => {
   const statement = sql(`
     with last_job as (
       select
+        production_order_id,
         max(seq) AS seq
       from
         jobs
@@ -75,6 +76,8 @@ const findOne = (id) => {
     left join
       jobs j
     on
+      j.production_order_id = lj.production_order_id
+    and
       j.seq = lj.seq
     and
       j.status = 'CLOSED'
@@ -157,6 +160,8 @@ const findAllNotReleased = () => {
     left join
       jobs j
     on
+      j.production_order_id = lj.production_order_id
+    and
       j.seq = lj.seq
     and
       j.status = 'CLOSED'

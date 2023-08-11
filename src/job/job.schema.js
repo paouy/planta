@@ -13,8 +13,8 @@ const mapToJobSchema = (data) => {
     schema.operation_id = data.operation.id
   }
 
-  if (data.workstation?.id) {
-    schema.workstation_id = data.workstation.id
+  if ('workstation' in data) {
+    schema.workstation_id = data.workstation?.id || null
   }
 
   if ('status' in data) {

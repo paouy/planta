@@ -71,7 +71,7 @@ const findAllNotClosed = () => {
         where
           ob.status != 'CLOSED'
         group by
-          ob.id
+          obj.operation_batch_id
       )
 
     select

@@ -149,6 +149,19 @@ const findAllByOperationBatchId = (operationBatchId) => {
 
 const findAllWithProductionOrderNotReleased = ()=> {
   const statement = sql(`
+    with operation_batch_jobs_not_closed as (
+      select
+        *
+      from
+        operation_batch_jobs obj
+      join
+        operation_batches ob
+      on
+        obj.operation_batch_id = ob.id
+      where
+        ob.status != 'CLOSED'
+    )
+
     select
       j.id,
       j.seq,
@@ -199,15 +212,9 @@ const findAllWithProductionOrderNotReleased = ()=> {
     and
       pj.status = 'CLOSED'
     left join
-      operation_batch_jobs obj
+      operation_batch_jobs_not_closed obj
     on
       j.id = obj.job_id
-    left join
-      operation_batches ob
-    on
-      obj.operation_batch_id = ob.id
-    and
-      ob.status != 'CLOSED'
     where
       po.is_released = 0
     order by
@@ -224,6 +231,24 @@ const updateOne = (data) => {
   data = mapToJobSchema(data)
 
   const statement = sql(`update jobs ${setValues(data)} where id = @id`)
+  const result = statement.run(data)
+
+  return result
+}
+
+const updateOneByProductionOrderIdAndOperationId = (data) => {
+  data = mapToJobSchema(data)
+
+  const statement = sql(`
+    update
+      jobs
+      ${setValues(data)}
+    where
+      production_order_id = @production_order_id
+    and
+      operation_id = @operation_id
+  `)
+
   const result = statement.run(data)
 
   return result
@@ -248,6 +273,7 @@ export const createJobRepository = () => {
     findAllByOperationBatchId,
     findAllWithProductionOrderNotReleased,
     updateOne,
+    updateOneByProductionOrderIdAndOperationId,
     updateMany
   }
 }

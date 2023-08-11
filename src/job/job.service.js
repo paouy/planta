@@ -35,6 +35,10 @@ export const updateOne = (data) => {
   return jobRepository.updateOne(data)
 }
 
+export const updateOneByProductionOrderAndOperation = (data) => {
+  return jobRepository.updateOneByProductionOrderIdAndOperationId(data)
+}
+
 export const updateMany = (data) => {
   return jobRepository.updateMany(data)
 }
