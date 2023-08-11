@@ -5,10 +5,11 @@ const mapToProductionRecordSchema = (data) => {
     id: data.id || ulid(),
     production_order_id: data.productionOrderId,
     operation_id: data.operation.id,
-    workstation_id: data.workstation.id,
-    equipment_id: data.equipment.id,
+    workstation_id: data.workstation?.id || null,
+    equipment_id: data.equipment?.id || null,
     type: data.type.toUpperCase(),
-    qty: Number(data.qty)
+    qty: Number(data.qty),
+    time_taken_mins: Number(data.timeTakenMins || 0)
   }
 
   return schema

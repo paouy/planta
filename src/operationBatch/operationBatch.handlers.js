@@ -33,3 +33,17 @@ export const deleteOne = (request, reply) => {
 
   return reply.code(204).send()
 }
+
+export const start = (request, reply) => {
+  const { id } = request.params
+  operationBatchService.start(id)
+
+  return reply.code(204).send()
+}
+
+export const createReport = (request, reply) => {
+  const data = request.body
+  operationBatchService.createReport(data)
+
+  return reply.code(204).send()
+}

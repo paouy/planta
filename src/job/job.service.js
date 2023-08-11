@@ -35,6 +35,6 @@ export const updateOne = (data) => {
   return jobRepository.updateOne(data)
 }
 
-export const deleteOne = (id) => {
-  return jobRepository.deleteOne(id)
+export const updateMany = (data) => {
+  return jobRepository.updateMany(data)
 }

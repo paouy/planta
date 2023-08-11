@@ -2,7 +2,7 @@ import * as operationBatchJobHandlers from './operationBatchJob.handlers.js'
 
 const operationBatchJobRoutes = (app, options, done) => {
   app.post('/', operationBatchJobHandlers.createOne)
-  app.delete('/', operationBatchJobHandlers.deleteOne)
+  app.post('/delete', operationBatchJobHandlers.deleteOne)
 
   done()
 }

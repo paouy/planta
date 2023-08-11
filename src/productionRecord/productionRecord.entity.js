@@ -9,7 +9,8 @@ const transformToProductionRecordEntity = (schema) => {
     qty,
     operation_name,
     workstation_name,
-    equipment_name
+    equipment_name,
+    time_taken_mins
   } = schema
 
   const productionRecord = {
@@ -22,7 +23,8 @@ const transformToProductionRecordEntity = (schema) => {
     workstation: null,
     equipment: null,
     type: type.toUpperCase(),
-    qty: Number(qty)
+    qty: Number(qty),
+    timeTakenMins: Number(time_taken_mins)
   }
 
   if (workstation_id && workstation_name) {

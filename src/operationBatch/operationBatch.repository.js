@@ -59,6 +59,21 @@ const findOne = (id) => {
 
 const findAllNotClosed = () => {
   const statement = sql(`
+    with
+      related_operation_batch_jobs as (
+        select
+          count(obj.job_id) as count,
+          obj.operation_batch_id
+        from
+          operation_batch_jobs obj
+        join
+          operation_batches ob
+        where
+          ob.status != 'CLOSED'
+        group by
+          ob.id
+      )
+
     select
       ob.id,
       ob.public_id,
@@ -66,13 +81,18 @@ const findAllNotClosed = () => {
       ob.workstation_id,
       ob.status,
       ob.schedule,
-      w.name as workstation_name
+      w.name as workstation_name,
+      obj.count as job_count
     from
       operation_batches ob
     join
       workstations w
     on
       ob.workstation_id = w.id
+    left join
+      related_operation_batch_jobs obj
+    on
+      ob.id = obj.operation_batch_id
     where
       ob.status != 'CLOSED'
   `)

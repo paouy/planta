@@ -2,9 +2,9 @@ import * as productionRecordService from './productionRecord.service.js'
 
 export const createOne = (request, reply) => {
   const data = request.body
-  productionRecordService.createOne(data)
+  const productionRecord = productionRecordService.createOne(data)
 
-  return reply.code(204).send()
+  return reply.send(productionRecord)
 }
 
 export const getAllByProductionOrder = (request, reply) => {

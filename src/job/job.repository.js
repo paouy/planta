@@ -196,6 +196,8 @@ const findAllWithProductionOrderNotReleased = ()=> {
       j.production_order_id = pj.production_order_id
     and
       j.seq = pj.seq + 1
+    and
+      pj.status = 'CLOSED'
     left join
       operation_batch_jobs obj
     on
@@ -227,12 +229,25 @@ const updateOne = (data) => {
   return result
 }
 
+const updateMany = (data) => {
+  data = data.map(mapToJobSchema)
+
+  const transaction = txn(jobs => {
+    for (const job of jobs) {
+      sql(`update jobs ${setValues(job)} where id = @id`).run(job)
+    }
+  })
+
+  return transaction(data)
+}
+
 export const createJobRepository = () => {
   return {
     insertMany,
     findAllByProductionOrderId,
     findAllByOperationBatchId,
     findAllWithProductionOrderNotReleased,
-    updateOne
+    updateOne,
+    updateMany
   }
 }

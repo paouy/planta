@@ -6,7 +6,8 @@ const transformToOperationBatchEntity = (schema) => {
     workstation_id,
     status,
     schedule,
-    workstation_name
+    workstation_name,
+    job_count = 0
   } = schema
 
   const operationBatch = {
@@ -18,7 +19,8 @@ const transformToOperationBatchEntity = (schema) => {
       name: workstation_name
     },
     status,
-    schedule
+    schedule,
+    jobCount: Number(job_count)
   }
 
   return operationBatch
