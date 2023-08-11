@@ -1,3 +1,5 @@
+import { decodeTime } from 'ulidx'
+
 const transformToProductionRecordEntity = (schema) => {
   const {
     id,
@@ -24,7 +26,8 @@ const transformToProductionRecordEntity = (schema) => {
     equipment: null,
     type: type.toUpperCase(),
     qty: Number(qty),
-    timeTakenMins: Number(time_taken_mins)
+    timeTakenMins: Number(time_taken_mins),
+    timestamp: decodeTime(id)
   }
 
   if (workstation_id && workstation_name) {

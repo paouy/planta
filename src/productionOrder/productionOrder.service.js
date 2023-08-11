@@ -1,5 +1,7 @@
-import { productService } from '../product/index.js'
 import { jobService } from '../job/index.js'
+import { materialService } from '../material/index.js'
+import { productService } from '../product/index.js'
+import { productMaterialService } from '../productMaterial/index.js'
 import { createProductionOrderRepository } from './productionOrder.repository.js'
 import { transformToProductionOrderEntity } from './productionOrder.entity.js'
 
@@ -7,7 +9,7 @@ const productionOrderRepository = createProductionOrderRepository()
 
 export const createOne = (data) => {
   const lastPriorityProductionOrder = productionOrderRepository
-    .findLastPriorityNotReleased()
+    .findOneNotReleasedLastPriority()
 
   data.priority = (lastPriorityProductionOrder?.priority || 0) + 1000
   
@@ -63,4 +65,38 @@ export const updateOne = (data) => {
 
 export const deleteOne = (id) => {
   return productionOrderRepository.deleteOne(id)
+}
+
+export const release = async (id) => {
+  const returnedRow = productionOrderRepository.findOne(id)
+  const productionOrder = transformToProductionOrderEntity(returnedRow)
+
+  if (productionOrder.status !== 'CLOSED') {
+    throw new Error('Production order is not yet closed')
+  }
+
+  const productMaterials = productMaterialService.getAllByProduct(productionOrder.product.id)
+
+  productMaterials.forEach(({ material, qty }) => {
+    materialService.increment({
+      id: material.id,
+      qty: productionOrder.qtyMade * qty * -1
+    })
+  })
+
+  productService.increment({
+    id: productionOrder.product.id,
+    qty: productionOrder.qtyMade
+  })
+
+  // if (productionOrder.salesOrderItemId) {
+  //   await allocationOrderService.add({
+  //     salesOrderItem: {
+  //       id: productionOrder.salesOrderItemId
+  //     },
+  //     qty: productionOrder.qtyProduced
+  //   })
+  // }
+
+  productionOrderRepository.updateOne({ id, isReleased: true })
 }

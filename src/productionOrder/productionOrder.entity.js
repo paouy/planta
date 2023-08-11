@@ -11,7 +11,8 @@ const transformToProductionOrderEntity = (schema) => {
     priority,
     due_date,
     sales_order_item_id,
-    seq
+    seq,
+    qty_made = 0
   } = schema
 
   const productionOrder = {
@@ -24,6 +25,7 @@ const transformToProductionOrderEntity = (schema) => {
     },
     status,
     qty: Number(qty),
+    qtyMade: Number(qty_made),
     priority: Number(priority),
     dueDate: due_date
   }

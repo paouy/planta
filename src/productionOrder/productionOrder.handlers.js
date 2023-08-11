@@ -42,3 +42,10 @@ export const deleteOne = (request, reply) => {
 
   return reply.code(204).send()
 }
+
+export const release = (request, reply) => {
+  const { id } = request.params
+  productionOrderService.release(id)
+
+  return reply.code(204).send()
+}
