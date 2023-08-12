@@ -9,6 +9,10 @@ export const createOne = (data) => {
   return transformToSalesOrderItemEntity(salesOrderItem)
 }
 
+export const createMany = (data) => {
+  return salesOrderItemRepository.insertMany(data)
+}
+
 export const getOne = (id) => {
   const salesOrderItem = salesOrderItemRepository.findOne(id)
 

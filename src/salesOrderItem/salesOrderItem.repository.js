@@ -1,4 +1,4 @@
-import { sql, setValues } from '../sqlite.js'
+import { sql, setValues, txn } from '../sqlite.js'
 import { mapToSalesOrderItemSchema } from './salesOrderItem.schema.js'
 
 const insertOne = (data) => {
@@ -27,6 +27,36 @@ const insertOne = (data) => {
   const result = statement.get(data)
 
   return result
+}
+
+const insertMany = (data) => {
+  data = data.map(mapToSalesOrderItemSchema)
+
+  const statement = sql(`
+    insert into
+      sales_order_items (
+        id,
+        public_id,
+        sales_order_id,
+        product_id,
+        qty
+      )
+      values (
+        @id,
+        @public_id,
+        @sales_order_id,
+        @product_id,
+        @qty
+      )
+  `)
+
+  const transaction = txn(salesOrderItems => {
+    for (const salesOrderItem of salesOrderItems) {
+      statement.run(salesOrderItem)
+    }
+  })
+
+  return transaction(data)
 }
 
 const findOne = (id) => {
@@ -100,6 +130,7 @@ const deleteOne = (id) => {
 export const createSalesOrderItemRepository = () => {
   return {
     insertOne,
+    insertMany,
     findOne,
     findAllBySalesOrderId,
     updateOne,

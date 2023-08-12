@@ -5,7 +5,8 @@ const transformToSalesOrderEntity = (schema) => {
     customer_id,
     date,
     status,
-    customer_short_name
+    customer_short_name,
+    item_count
   } = schema
 
   const salesOrder = {
@@ -15,11 +16,15 @@ const transformToSalesOrderEntity = (schema) => {
       id: customer_id
     },
     date,
-    status,
+    status
   }
 
   if (customer_short_name) {
     salesOrder.customer.shortName = customer_short_name
+  }
+
+  if (item_count) {
+    salesOrder.itemCount = Number(item_count)
   }
 
   return salesOrder

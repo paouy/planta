@@ -81,19 +81,35 @@ const findAllWithStatusFulfilled = () => {
 
 const findAllWithStatusNotFulfilled = () => {
   const statement = sql(`
+    with
+      related_sales_order_items as (
+        select
+          count(id) as count,
+          sales_order_id
+        from
+          sales_order_items
+        group by
+          sales_order_id
+      )
+
     select
       so.id,
       so.public_id,
       so.customer_id,
       so.date,
       so.status,
-      c.short_name as customer_short_name
+      c.short_name as customer_short_name,
+      soi.count as item_count
     from
       sales_orders so
     join
       customers c
     on
       so.customer_id = c.id
+    left join
+      related_sales_order_items soi
+    on
+      so.id = soi.sales_order_id
     where
       so.status != 'FULFILLED'
     order by

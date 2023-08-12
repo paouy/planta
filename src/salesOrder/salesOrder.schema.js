@@ -21,6 +21,10 @@ const mapToSalesOrderSchema = (data) => {
     schema.status = data.status.toUpperCase()
   }
 
+  if (!data.id) {
+    schema.status = 'OPEN'
+  }
+
   return schema
 }
 

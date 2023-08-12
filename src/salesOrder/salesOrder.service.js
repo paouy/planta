@@ -1,12 +1,17 @@
+import { salesOrderItemService } from '../salesOrderItem/index.js'
 import { createSalesOrderRepository } from './salesOrder.repository.js'
 import { transformToSalesOrderEntity } from './salesOrder.entity.js'
 
 const salesOrderRepository = createSalesOrderRepository()
 
-export const createOne = (data) => {
-  const salesOrder = salesOrderRepository.insertOne({ ...data, status: 'OPEN' })
+export const createOne = ({ items, ...data }) => {
+  const insertedRow = salesOrderRepository.insertOne(data)
+  const salesOrder = transformToSalesOrderEntity(insertedRow)
+  const salesOrderItems = items.map(item => ({ salesOrderId: salesOrder.id, ...item }))
 
-  return transformToSalesOrderEntity(salesOrder)
+  salesOrderItemService.createMany(salesOrderItems)
+
+  return salesOrder
 }
 
 export const getOne = (id) => {
@@ -44,6 +49,7 @@ export const deleteOne = (id) => {
 }
 
 export const confirm = (id) => {
+  // Implement: Set salesOrderItems public ID
   return salesOrderRepository.updateOne({ id, status: 'CONFIRMED' })
 }
 
