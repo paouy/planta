@@ -68,7 +68,10 @@ export const confirm = (id) => {
 
   salesOrderItemService.updateMany(salesOrderItemsWithPublicId)
 
-  const allocations = salesOrderItems.map(({ id }) => ({ salesOrderItem: { id }}))
+  const allocations = salesOrderItems.map(({ id }) => ({
+    salesOrderItem: { id },
+    isCommitted: false
+  }))
 
   allocationService.createMany(allocations)
 
