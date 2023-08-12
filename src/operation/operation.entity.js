@@ -5,6 +5,7 @@ const transformToOperationEntity = (schema) => {
     seq,
     time_per_cycle_mins,
     allows_rework,
+    has_equipment,
     is_batch,
     batch_size_parameter
   } = schema
@@ -15,6 +16,7 @@ const transformToOperationEntity = (schema) => {
     seq: Number(seq),
     timePerCycleMins: Number(time_per_cycle_mins),
     allowsRework: Boolean(allows_rework),
+    hasEquipment: Boolean(has_equipment),
     isBatch: Boolean(is_batch),
     batchSizeParameter: batch_size_parameter
   }

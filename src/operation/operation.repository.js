@@ -34,7 +34,33 @@ const insertOne = (data) => {
 }
 
 const findAll = () => {
-  const statement = sql('select * from operations order by seq')
+  const statement = sql(`
+    with
+      operations_with_equipment as (
+        select distinct
+          json_each.value as operation_id,
+          true as has_equipment
+        from
+          equipments
+        join
+          json_each(equipments.operation_ids)
+        on
+          true
+      )
+
+    select
+      o.*,
+      oe.has_equipment
+    from
+      operations o
+    left join
+      operations_with_equipment oe
+    on
+      o.id = oe.operation_id
+    order by
+      o.seq
+  `)
+
   const results = statement.all()
 
   return results
