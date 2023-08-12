@@ -1,3 +1,4 @@
+import { allocationService } from '../allocation/index.js'
 import { jobService } from '../job/index.js'
 import { materialService } from '../material/index.js'
 import { productService } from '../product/index.js'
@@ -89,14 +90,14 @@ export const release = async (id) => {
     qty: productionOrder.qtyMade
   })
 
-  // if (productionOrder.salesOrderItemId) {
-  //   await allocationOrderService.add({
-  //     salesOrderItem: {
-  //       id: productionOrder.salesOrderItemId
-  //     },
-  //     qty: productionOrder.qtyProduced
-  //   })
-  // }
+  if (productionOrder.salesOrderItemId) {
+    allocationService.increment({
+      salesOrderItem: {
+        id: productionOrder.salesOrderItemId
+      },
+      qty: productionOrder.qtyMade
+    })
+  }
 
   productionOrderRepository.updateOne({ id, isReleased: true })
 }

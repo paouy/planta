@@ -71,6 +71,10 @@ const findOne = (id) => {
         sales_order_item_id is not null
       and
         sales_order_item_id = @id
+      and
+        is_released = false
+      and
+        status != 'CANCELLED'
       group by
         sales_order_item_id
     )
@@ -116,6 +120,10 @@ const findAllBySalesOrderId = (salesOrderId) => {
           production_orders
         where
           sales_order_item_id is not null
+        and
+          is_released = false
+        and
+          status != 'CANCELLED'
         group by
           sales_order_item_id
       )
@@ -146,6 +154,8 @@ const findAllBySalesOrderId = (salesOrderId) => {
       allocations a
     on
       soi.id = a.sales_order_item_id
+    and
+      a.is_committed = false
     where
       soi.sales_order_id = ?
   `)
