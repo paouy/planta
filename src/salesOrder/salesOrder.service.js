@@ -1,4 +1,6 @@
 import { allocationService } from '../allocation/index.js'
+import { jobService } from '../job/index.js'
+import { productionOrderService } from '../productionOrder/index.js'
 import { salesOrderItemService } from '../salesOrderItem/index.js'
 import { createSalesOrderRepository } from './salesOrder.repository.js'
 import { transformToSalesOrderEntity } from './salesOrder.entity.js'
@@ -59,12 +61,12 @@ export const confirm = (id) => {
 
   const salesOrderItems = salesOrderItemService.getAllBySalesOrder(id)
 
-  const updatedSalesOrderItems = salesOrderItems.map((salesOrderItem, index) => {
+  const salesOrderItemsWithPublicId = salesOrderItems.map((salesOrderItem, index) => {
     const publicId = `${salesOrder.publicId}/${index + 1}`
     return { ...salesOrderItem, publicId }
   })
 
-  salesOrderItemService.updateMany(updatedSalesOrderItems)
+  salesOrderItemService.updateMany(salesOrderItemsWithPublicId)
 
   const allocations = salesOrderItems.map(({ id }) => ({ salesOrderItem: { id }}))
 
@@ -74,5 +76,15 @@ export const confirm = (id) => {
 }
 
 export const cancel = (data) => {
+  const productionOrders = productionOrderService
+    .getAllNotReleasedBySalesOrder(data.id)
+    .map(({ id }) => ({ id, status: 'CANCELLED' }))
+
+  productionOrderService.updateMany(productionOrders)
+
+  allocationService.deleteManyBySalesOrder(data.id)
+
+  jobService.cancelNotClosedBySalesOrder(data.id)
+
   return salesOrderRepository.updateOne(data)
 }

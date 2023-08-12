@@ -26,3 +26,7 @@ export const getAllByProduct = (productId) => {
 export const increment = (data) => {
   return allocationRepository.incrementQty(data)
 }
+
+export const deleteManyBySalesOrder = (salesOrderId) => {
+  return allocationRepository.deleteManyBySalesOrderId(salesOrderId)
+}

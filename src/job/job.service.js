@@ -42,3 +42,7 @@ export const updateOneByProductionOrderAndOperation = (data) => {
 export const updateMany = (data) => {
   return jobRepository.updateMany(data)
 }
+
+export const cancelNotClosedBySalesOrder = (salesOrderId) => {
+  return jobRepository.cancelManyNotClosedBySalesOrderId(salesOrderId)
+}

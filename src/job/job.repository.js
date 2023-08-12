@@ -119,6 +119,8 @@ const findAllByOperationBatchId = (operationBatchId) => {
       production_orders po
     on
       j.production_order_id = po.id
+    and
+      po.status != 'CANCELLED'
     join
       products p
     on
@@ -217,6 +219,8 @@ const findAllWithProductionOrderNotReleased = ()=> {
       j.id = obj.job_id
     where
       po.is_released = 0
+    and
+      po.status != 'CANCELLED'
     order by
       po.priority,
       po.id
@@ -266,6 +270,41 @@ const updateMany = (data) => {
   return transaction(data)
 }
 
+const cancelManyNotClosedBySalesOrderId = (salesOrderId) => {
+  const statement = sql(`
+    with
+      relevant_production_orders as (
+        SELECT
+          po.id
+        FROM
+          production_orders po
+        JOIN
+          sales_order_items soi
+        ON
+          po.sales_order_item_id = soi.id
+        JOIN
+          sales_orders so
+        ON
+          soi.sales_order_id = so.id
+        WHERE
+          so.id = ?
+      )
+
+    update
+      jobs
+    set
+      status = 'CANCELLED'
+    where
+      production_order_id in (select id from relevant_production_orders)
+    and
+      status != 'CLOSED'
+  `)
+
+  const result = statement.run(salesOrderId)
+
+  return result
+}
+
 export const createJobRepository = () => {
   return {
     insertMany,
@@ -274,6 +313,7 @@ export const createJobRepository = () => {
     findAllWithProductionOrderNotReleased,
     updateOne,
     updateOneByProductionOrderIdAndOperationId,
+    cancelManyNotClosedBySalesOrderId,
     updateMany
   }
 }

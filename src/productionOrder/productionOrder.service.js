@@ -52,6 +52,14 @@ export const getAllNotReleasedByProduct = (productId) => {
   return productionOrders
 }
 
+export const getAllNotReleasedBySalesOrder = (salesOrderId) => {
+  const productionOrders = productionOrderRepository
+    .findAllNotReleasedBySalesOrderId(salesOrderId)
+    .map(transformToProductionOrderEntity)
+
+  return productionOrders
+}
+
 export const getAllReleased = () => {
   const productionOrders = productionOrderRepository
     .findAllReleased()
@@ -62,6 +70,10 @@ export const getAllReleased = () => {
 
 export const updateOne = (data) => {
   return productionOrderRepository.updateOne(data)
+}
+
+export const updateMany = (data) => {
+  return productionOrderRepository.updateMany(data)
 }
 
 export const deleteOne = (id) => {

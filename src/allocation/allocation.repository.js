@@ -87,11 +87,33 @@ const incrementQty = (data) => {
   return result
 }
 
+const deleteManyBySalesOrderId = (salesOrderId) => {
+  const statement = sql(`
+    delete from
+      allocations
+    where
+      sales_order_item_id
+    in (
+      select
+        id
+      from
+        sales_order_items
+      where
+        sales_order_id = ?
+    )
+  `)
+
+  const result = statement.run(salesOrderId)
+
+  return result
+}
+
 export const createAllocationRepository = () => {
   return {
     insertMany,
     findAllBySalesOrderItemId,
     findAllByProductId,
-    incrementQty
+    incrementQty,
+    deleteManyBySalesOrderId
   }
 }
