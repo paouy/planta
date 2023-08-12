@@ -23,6 +23,6 @@ export const getAllByProduct = (productId) => {
   return allocations
 }
 
-export const updateOne = (data) => {
-  return allocationRepository.updateOne(data)
+export const increment = (data) => {
+  return allocationRepository.incrementQty(data)
 }

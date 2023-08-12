@@ -1,6 +1,5 @@
 const transformToAllocationEntity = (schema) => {
   const {
-    id,
     sales_order_item_id,
     qty,
     is_committed,
@@ -8,7 +7,6 @@ const transformToAllocationEntity = (schema) => {
   } = schema
 
   const allocation = {
-    id,
     salesOrderItem: {
       id: sales_order_item_id
     },

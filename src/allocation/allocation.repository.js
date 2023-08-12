@@ -7,13 +7,11 @@ const insertMany = (data) => {
   const statement = sql(`
     insert into
       allocations (
-        id,
         sales_order_item_id,
         qty,
         is_committed
       )
       values (
-        @id,
         @sales_order_item_id,
         @qty,
         @is_committed
@@ -38,7 +36,7 @@ const findAllBySalesOrderItemId = (salesOrderItemId) => {
     where
       sales_order_item_id = ?
     order by
-      id
+      sales_order_item_id
   `)
 
   const results = statement.all(salesOrderItemId)
@@ -49,7 +47,6 @@ const findAllBySalesOrderItemId = (salesOrderItemId) => {
 const findAllByProductId = (productId) => {
   const statement = sql(`
     select
-      a.id,
       a.sales_order_item_id,
       a.qty,
       a.is_committed,
@@ -62,8 +59,10 @@ const findAllByProductId = (productId) => {
       a.sales_order_item_id = soi.id
     where
       soi.product_id = ?
+    and
+      a.qty > 0
     order by
-      a.id
+      a.sales_order_item_id
   `)
 
   const results = statement.all(productId)
@@ -71,10 +70,18 @@ const findAllByProductId = (productId) => {
   return results
 }
 
-const updateOne = (data) => {
+const incrementQty = (data) => {
   data = mapToAllocationSchema(data)
 
-  const statement = sql(`update allocations ${setValues(data)} where id = @id`)
+  const statement = sql(`
+    update
+      allocations
+    set
+      qty = qty + @qty
+    where
+      sales_order_item_id = @sales_order_item_id
+  `)
+
   const result = statement.run(data)
 
   return result
@@ -85,6 +92,6 @@ export const createAllocationRepository = () => {
     insertMany,
     findAllBySalesOrderItemId,
     findAllByProductId,
-    updateOne
+    incrementQty
   }
 }

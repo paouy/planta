@@ -46,6 +46,20 @@ const findOne = (id) => {
           po.is_released = false
         and
           po.product_id = @id
+      ),
+      allocation as (
+        select
+          sum(a.qty) as qty
+        from
+          allocations a
+        join
+          sales_order_items soi
+        on
+          a.sales_order_item_id = soi.id
+        where
+          a.is_committed = false
+        and
+          soi.product_id = @id
       )
 
     select
@@ -57,7 +71,8 @@ const findOne = (id) => {
       p.uom,
       p.qty_available,
       c.name as category_name,
-      prd.qty as qty_wip
+      prd.qty as qty_wip,
+      a.qty as qty_allocated
     from
       products p
     join
@@ -66,6 +81,10 @@ const findOne = (id) => {
       p.category_id = c.id
     left join
       production prd
+    on
+      true
+    left join
+      allocation a
     on
       true
     where
@@ -92,6 +111,21 @@ const findAll = () => {
           status != 'CANCELLED'
         group by
           product_id
+      ),
+      allocation as (
+        select
+          sum(a.qty) as qty,
+          soi.product_id
+        from
+          allocations a
+        join
+          sales_order_items soi
+        on
+          a.sales_order_item_id = soi.id
+        where
+          a.is_committed = false
+        group by
+          soi.product_id
       )
 
     select
@@ -103,7 +137,8 @@ const findAll = () => {
       p.uom,
       p.qty_available,
       c.name as category_name,
-      prd.qty as qty_wip
+      prd.qty as qty_wip,
+      a.qty as qty_allocated
     from
       products p
     join
@@ -114,6 +149,10 @@ const findAll = () => {
       production prd
     on
       p.id = prd.product_id
+    left join
+      allocation a
+    on
+      p.id = a.product_id
     order by
       p.name,
       c.name
