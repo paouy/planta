@@ -1,5 +1,6 @@
 import { allocationService } from '../allocation/index.js'
 import { jobService } from '../job/index.js'
+import { operationBatchJobService } from '../operationBatchJob/index.js'
 import { productionOrderService } from '../productionOrder/index.js'
 import { salesOrderItemService } from '../salesOrderItem/index.js'
 import { createSalesOrderRepository } from './salesOrder.repository.js'
@@ -86,6 +87,8 @@ export const cancel = (data) => {
   productionOrderService.updateMany(productionOrders)
 
   allocationService.deleteManyBySalesOrder(data.id)
+
+  operationBatchJobService.deleteManyBySalesOrder(data.id)
 
   jobService.cancelNotClosedBySalesOrder(data.id)
 

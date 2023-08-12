@@ -67,13 +67,9 @@ const findAllNotClosed = () => {
         from
           operation_batch_jobs obj
         join
-          jobs j
-        on
-          obj.job_id = j.id
-        and
-          j.status != 'CANCELLED'
-        join
           operation_batches ob
+        on
+          obj.operation_batch_id = ob.id
         where
           ob.status != 'CLOSED'
         group by

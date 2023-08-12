@@ -9,3 +9,7 @@ export const createOne = (data) => {
 export const deleteOne = (data) => {
   return operationBatchJobRepository.deleteOne(data)
 }
+
+export const deleteManyBySalesOrder = (salesOrderId) => {
+  return operationBatchJobRepository.deleteManyBySalesOrderId(salesOrderId)
+}
