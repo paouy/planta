@@ -31,6 +31,10 @@ export const updateOne = (data) => {
   return salesOrderItemRepository.updateOne(data)
 }
 
+export const updateMany = (data) => {
+  return salesOrderItemRepository.updateMany(data)
+}
+
 export const deleteOne = (id) => {
   return salesOrderItemRepository.deleteOne(id)
 }

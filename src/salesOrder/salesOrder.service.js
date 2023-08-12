@@ -1,3 +1,4 @@
+import { allocationService } from '../allocation/index.js'
 import { salesOrderItemService } from '../salesOrderItem/index.js'
 import { createSalesOrderRepository } from './salesOrder.repository.js'
 import { transformToSalesOrderEntity } from './salesOrder.entity.js'
@@ -49,8 +50,27 @@ export const deleteOne = (id) => {
 }
 
 export const confirm = (id) => {
-  // Implement: Set salesOrderItems public ID
-  return salesOrderRepository.updateOne({ id, status: 'CONFIRMED' })
+  const returnedRow = salesOrderRepository.findOne(id)
+  const salesOrder = transformToSalesOrderEntity(returnedRow)
+
+  if (salesOrder.status !== 'OPEN') {
+    throw new Error('Sales order cannot be confirmed')
+  }
+
+  const salesOrderItems = salesOrderItemService.getAllBySalesOrder(id)
+
+  const updatedSalesOrderItems = salesOrderItems.map((salesOrderItem, index) => {
+    const publicId = `${salesOrder.publicId}/${index + 1}`
+    return { ...salesOrderItem, publicId }
+  })
+
+  salesOrderItemService.updateMany(updatedSalesOrderItems)
+
+  const allocations = salesOrderItems.map(({ id }) => ({ salesOrderItem: { id }}))
+
+  allocationService.createMany(allocations)
+
+  salesOrderRepository.updateOne({ id, status: 'CONFIRMED' })
 }
 
 export const cancel = (data) => {

@@ -3,8 +3,8 @@ import { transformToAllocationEntity } from './allocation.entity.js'
 
 const allocationRepository = createAllocationRepository()
 
-export const createOne = (data) => {
-  return allocationRepository.insertOne(data)
+export const createMany = (data) => {
+  return allocationRepository.insertMany(data)
 }
 
 export const getAllBySalesOrderItem = (salesOrderItemId) => {
@@ -25,8 +25,4 @@ export const getAllByProduct = (productId) => {
 
 export const updateOne = (data) => {
   return allocationRepository.updateOne(data)
-}
-
-export const deleteOne = (id) => {
-  return allocationRepository.deleteOne(id)
 }

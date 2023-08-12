@@ -17,6 +17,11 @@ const mapToAllocationSchema = (data) => {
     schema.is_committed = Number(data.isCommitted)
   }
 
+  if (!data.id) {
+    schema.qty = 0
+    schema.is_committed = Number(false)
+  }
+
   return schema
 }
 

@@ -1,8 +1,8 @@
-import { sql, setValues } from '../sqlite.js'
+import { sql, setValues, txn } from '../sqlite.js'
 import { mapToAllocationSchema } from './allocation.schema.js'
 
-const insertOne = (data) => {
-  data = mapToAllocationSchema(data)
+const insertMany = (data) => {
+  data = data.map(mapToAllocationSchema)
 
   const statement = sql(`
     insert into
@@ -19,10 +19,14 @@ const insertOne = (data) => {
         @is_committed
       )
   `)
-  
-  const result = statement.run(data)
 
-  return result
+  const transaction = txn(allocations => {
+    for (const allocation of allocations) {
+      statement.run(allocation)
+    }
+  })
+
+  return transaction(data)
 }
 
 const findAllBySalesOrderItemId = (salesOrderItemId) => {
@@ -76,19 +80,11 @@ const updateOne = (data) => {
   return result
 }
 
-const deleteOne = (id) => {
-  const statement = sql('delete from allocations where id = ?')
-  const result = statement.run(id)
-
-  return result
-}
-
 export const createAllocationRepository = () => {
   return {
-    insertOne,
+    insertMany,
     findAllBySalesOrderItemId,
     findAllByProductId,
-    updateOne,
-    deleteOne
+    updateOne
   }
 }
