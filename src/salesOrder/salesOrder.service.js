@@ -77,6 +77,7 @@ export const confirm = (id) => {
 }
 
 export const forceFulfilledStatus = (id) => {
+  allocationService.resetManyBySalesOrder(id)
   salesOrderRepository.updateOne({ id, status: 'FULFILLED' })
 }
 
