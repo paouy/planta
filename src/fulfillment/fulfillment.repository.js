@@ -16,10 +16,40 @@ const insertOne = (data) => {
         @sales_order_item_id,
         @qty
       )
+    returning
+      id
   `)
   
-  const result = statement.run(data)
+  const { id } = statement.get(data)
+  const result = findOne(id)
 
+  return result
+}
+
+const findOne = (id) => {
+  const statement = sql(`
+    select
+      f.id,
+      f.sales_order_item_id,
+      f.qty,
+      soi.product_id,
+      so.id as sales_order_id
+    from
+      fulfillments f
+    join
+      sales_order_items soi
+    on
+      f.sales_order_item_id = soi.id
+    join
+      sales_orders so
+    on
+      soi.sales_order_id = so.id
+    where
+      f.id = ?
+  `)
+
+  const result = statement.get(id)
+  
   return result
 }
 
@@ -50,6 +80,7 @@ const deleteOne = (id) => {
 export const createFulfillmentRepository = () => {
   return {
     insertOne,
+    findOne,
     findAllBySalesOrderItemId,
     deleteOne
   }

@@ -8,13 +8,11 @@ const insertMany = (data) => {
     insert into
       allocations (
         sales_order_item_id,
-        qty,
-        is_committed
+        qty
       )
       values (
         @sales_order_item_id,
-        @qty,
-        @is_committed
+        @qty
       )
   `)
 
@@ -49,7 +47,6 @@ const findAllByProductId = (productId) => {
     select
       a.sales_order_item_id,
       a.qty,
-      a.is_committed,
       soi.public_id as sales_order_item_public_id
     from
       allocations a
@@ -87,6 +84,19 @@ const incrementQty = (data) => {
   return result
 }
 
+const deleteOneBySalesOrderItemId = (salesOrderItemId) => {
+  const statement = sql(`
+    delete from
+      allocations
+    where
+      sales_order_item_id = ?
+  `)
+
+  const result = statement.run(salesOrderItemId)
+
+  return result
+}
+
 const deleteManyBySalesOrderId = (salesOrderId) => {
   const statement = sql(`
     delete from
@@ -114,6 +124,7 @@ export const createAllocationRepository = () => {
     findAllBySalesOrderItemId,
     findAllByProductId,
     incrementQty,
+    deleteOneBySalesOrderItemId,
     deleteManyBySalesOrderId
   }
 }

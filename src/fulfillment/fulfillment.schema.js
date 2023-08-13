@@ -5,7 +5,7 @@ const mapToFulfillmentSchema = (data) => {
     id: data.id || ulid()
   }
 
-  if ('salesOrderItem' in data) {
+  if ('salesOrderItemId' in data) {
     schema.sales_order_item_id = data.salesOrderItemId
   }
 

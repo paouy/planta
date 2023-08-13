@@ -57,8 +57,6 @@ const findOne = (id) => {
         on
           a.sales_order_item_id = soi.id
         where
-          a.is_committed = false
-        and
           soi.product_id = @id
       )
 
@@ -122,8 +120,6 @@ const findAll = () => {
           sales_order_items soi
         on
           a.sales_order_item_id = soi.id
-        where
-          a.is_committed = false
         group by
           soi.product_id
       )

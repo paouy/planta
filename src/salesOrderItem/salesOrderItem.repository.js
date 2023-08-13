@@ -126,6 +126,25 @@ const findAllBySalesOrderId = (salesOrderId) => {
           status != 'CANCELLED'
         group by
           sales_order_item_id
+      ),
+      fulfillment as (
+        select
+          f.sales_order_item_id,
+          sum(f.qty) as qty
+        from
+          fulfillments f
+        join
+          sales_order_items soi
+        on
+          f.sales_order_item_id = soi.id
+        join
+          sales_orders so
+        on
+          soi.sales_order_id = so.id
+        where
+          so.id = @filter
+        group by
+          f.sales_order_item_id
       )
 
     select
@@ -139,7 +158,8 @@ const findAllBySalesOrderId = (salesOrderId) => {
       p.uom as product_uom,
       prd.count as production_order_count,
       prd.qty as qty_wip,
-      a.qty as qty_allocated
+      a.qty as qty_allocated,
+      f.qty as qty_fulfilled
     from
       sales_order_items soi
     join
@@ -154,13 +174,15 @@ const findAllBySalesOrderId = (salesOrderId) => {
       allocations a
     on
       soi.id = a.sales_order_item_id
-    and
-      a.is_committed = false
+    left join
+      fulfillment f
+    on
+      soi.id = f.sales_order_item_id
     where
-      soi.sales_order_id = ?
+      soi.sales_order_id = @filter
   `)
 
-  const results = statement.all(salesOrderId)
+  const results = statement.all({ filter: salesOrderId })
 
   return results
 }
