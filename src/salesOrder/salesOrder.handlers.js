@@ -33,13 +33,6 @@ export const getAll = (request, reply) => {
   return reply.send(salesOrders)
 }
 
-export const updateOne = (request, reply) => {
-  const data = request.body
-  salesOrderService.updateOne(data)
-
-  return reply.code(204).send()
-}
-
 export const deleteOne = (request, reply) => {
   const { id } = request.params
   salesOrderService.deleteOne(id)
@@ -67,6 +60,20 @@ export const cancel = (request, reply) => {
   }
 
   salesOrderService.cancel({ id, status })
+
+  return reply.code(204).send()
+}
+
+export const archive = (request, reply) => {
+  const { id } = request.params
+  salesOrderService.archive(id)
+
+  return reply.code(204).send()
+}
+
+export const forceFulfilledStatus = (request, reply) => {
+  const { id } = request.params
+  salesOrderService.forceFulfilledStatus(id)
 
   return reply.code(204).send()
 }

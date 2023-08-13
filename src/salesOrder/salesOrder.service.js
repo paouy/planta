@@ -76,6 +76,15 @@ export const confirm = (id) => {
   salesOrderRepository.updateOne({ id, status: 'CONFIRMED' })
 }
 
+export const forceFulfilledStatus = (id) => {
+  salesOrderRepository.updateOne({ id, status: 'FULFILLED' })
+}
+
+export const archive = (id) => {
+  allocationService.deleteManyBySalesOrder(id)
+  salesOrderRepository.updateOne({ id, isArchived: true })
+}
+
 export const cancel = (data) => {
   const productionOrders = productionOrderService
     .getAllNotReleasedBySalesOrder(data.id)
