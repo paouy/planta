@@ -24,14 +24,11 @@ export const getOne = (request, reply) => {
   }
 }
 
-export const getAllFulfilled = (request, reply) => {
-  const salesOrders = salesOrderService.getAllFulfilled()
-
-  return reply.send(salesOrders)
-}
-
-export const getAllNotFulfilled = (request, reply) => {
-  const salesOrders = salesOrderService.getAllNotFulfilled()
+export const getAll = (request, reply) => {
+  const { isArchived } = request.query
+  const salesOrders = isArchived
+    ? salesOrderService.getAllArchived()
+    : salesOrderService.getAllNotArchived()
 
   return reply.send(salesOrders)
 }

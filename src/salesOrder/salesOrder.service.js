@@ -28,17 +28,17 @@ export const getOne = (id) => {
   return transformToSalesOrderEntity(salesOrder)
 }
 
-export const getAllFulfilled = () => {
+export const getAllArchived = () => {
   const salesOrders = salesOrderRepository
-    .findAllWithStatusFulfilled()
+    .findAllArchived()
     .map(transformToSalesOrderEntity)
 
   return salesOrders
 }
 
-export const getAllNotFulfilled = () => {
+export const getAllNotArchived = () => {
   const salesOrders = salesOrderRepository
-    .findAllWithStatusNotFulfilled()
+    .findAllNotArchived()
     .map(transformToSalesOrderEntity)
 
   return salesOrders
@@ -69,10 +69,7 @@ export const confirm = (id) => {
 
   salesOrderItemService.updateMany(salesOrderItemsWithPublicId)
 
-  const allocations = salesOrderItems.map(({ id }) => ({
-    salesOrderItem: { id },
-    isCommitted: false
-  }))
+  const allocations = salesOrderItems.map(({ id }) => ({ salesOrderItem: { id } }))
 
   allocationService.createMany(allocations)
 
@@ -92,5 +89,5 @@ export const cancel = (data) => {
 
   jobService.cancelNotClosedBySalesOrder(data.id)
 
-  return salesOrderRepository.updateOne(data)
+  salesOrderRepository.updateOne({ ...data, isArchived: true })
 }

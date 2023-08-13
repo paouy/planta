@@ -21,8 +21,13 @@ const mapToSalesOrderSchema = (data) => {
     schema.status = data.status.toUpperCase()
   }
 
+  if ('isArchived' in data) {
+    schema.is_archived = Number(data.isArchived)
+  }
+
   if (!data.id) {
     schema.status = 'OPEN'
+    schema.is_archived = Number(false)
   }
 
   return schema

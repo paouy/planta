@@ -11,14 +11,16 @@ const insertOne = (data) => {
         public_id,
         customer_id,
         date,
-        status
+        status,
+        is_archived
       )
       values (
         @id,
         @public_id,
         @customer_id,
         @date,
-        @status
+        @status,
+        @is_archived
       )
     returning
       *
@@ -53,7 +55,7 @@ const findOne = (id) => {
   return result
 }
 
-const findAllWithStatusFulfilled = () => {
+const findAllArchived = () => {
   const statement = sql(`
     select
       so.id,
@@ -69,7 +71,7 @@ const findAllWithStatusFulfilled = () => {
     on
       so.customer_id = c.id
     where
-      so.status = 'FULFILLED'
+      so.is_archived = true
     order by
       so.date
   `)
@@ -79,7 +81,7 @@ const findAllWithStatusFulfilled = () => {
   return results
 }
 
-const findAllWithStatusNotFulfilled = () => {
+const findAllNotArchived = () => {
   const statement = sql(`
     with
       related_sales_order_items as (
@@ -111,7 +113,7 @@ const findAllWithStatusNotFulfilled = () => {
     on
       so.id = soi.sales_order_id
     where
-      so.status != 'FULFILLED'
+      so.is_archived = false
     order by
       so.date
   `)
@@ -141,8 +143,8 @@ export const createSalesOrderRepository = () => {
   return {
     insertOne,
     findOne,
-    findAllWithStatusFulfilled,
-    findAllWithStatusNotFulfilled,
+    findAllArchived,
+    findAllNotArchived,
     updateOne,
     deleteOne
   }
