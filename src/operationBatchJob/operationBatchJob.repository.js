@@ -38,6 +38,33 @@ const deleteOne = (data) => {
   return result
 }
 
+const deleteManyByProductionOrderId = (productionOrderId) => {
+  const statement = sql(`
+    with
+      production_order_jobs as (
+        SELECT
+          j.id
+        FROM
+          jobs AS j
+        JOIN
+          production_orders AS po
+        ON
+          j.production_order_id = po.id
+        WHERE
+          po.id = ?
+      )
+
+    delete from
+      operation_batch_jobs
+    where
+      job_id in (select id from production_order_jobs)
+  `)
+
+  const result = statement.run(productionOrderId)
+
+  return result
+}
+
 const deleteManyBySalesOrderId = (salesOrderId) => {
   const statement = sql(`
     with
@@ -77,6 +104,7 @@ export const createOperationBatchJobRepository = () => {
   return {
     insertOne,
     deleteOne,
+    deleteManyByProductionOrderId,
     deleteManyBySalesOrderId
   }
 }

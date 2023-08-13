@@ -1,6 +1,7 @@
 import { allocationService } from '../allocation/index.js'
 import { jobService } from '../job/index.js'
 import { materialService } from '../material/index.js'
+import { operationBatchJobService } from '../operationBatchJob/index.js'
 import { productService } from '../product/index.js'
 import { productMaterialService } from '../productMaterial/index.js'
 import { createProductionOrderRepository } from './productionOrder.repository.js'
@@ -78,6 +79,14 @@ export const updateMany = (data) => {
 
 export const deleteOne = (id) => {
   return productionOrderRepository.deleteOne(id)
+}
+
+export const cancel = (id) => {
+  operationBatchJobService.deleteManyByProductionOrder(id)
+
+  jobService.cancelManyNotClosedByProductionOrder(id)
+
+  productionOrderRepository.updateOne({ id, status: 'CANCELLED' })
 }
 
 export const release = async (id) => {

@@ -270,6 +270,13 @@ const updateMany = (data) => {
   return transaction(data)
 }
 
+const cancelManyNotClosedByProductionOrderId = (productionOrderId) => {
+  const statement = sql(`update jobs set status = 'CANCELLED' where status != 'CLOSED' and production_order_id = ?`)
+  const result = statement.run(productionOrderId)
+
+  return result
+}
+
 const cancelManyNotClosedBySalesOrderId = (salesOrderId) => {
   const statement = sql(`
     with
@@ -313,6 +320,7 @@ export const createJobRepository = () => {
     findAllWithProductionOrderNotReleased,
     updateOne,
     updateOneByProductionOrderIdAndOperationId,
+    cancelManyNotClosedByProductionOrderId,
     cancelManyNotClosedBySalesOrderId,
     updateMany
   }
