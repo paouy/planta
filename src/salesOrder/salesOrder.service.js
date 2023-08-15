@@ -1,5 +1,6 @@
 import { allocationService } from '../allocation/index.js'
 import { jobService } from '../job/index.js'
+import { lookupService } from '../lookup/index.js'
 import { operationBatchJobService } from '../operationBatchJob/index.js'
 import { productionOrderService } from '../productionOrder/index.js'
 import { salesOrderItemService } from '../salesOrderItem/index.js'
@@ -34,6 +35,11 @@ export const getAllArchived = () => {
     .map(transformToSalesOrderEntity)
 
   return salesOrders
+}
+
+export const getAllArchivedCount = () => {
+  const count = lookupService.getValue('archivedSalesOrderCount')
+  return count
 }
 
 export const getAllNotArchived = () => {
@@ -84,6 +90,7 @@ export const forceFulfilledStatus = (id) => {
 export const archive = (id) => {
   allocationService.deleteManyBySalesOrder(id)
   salesOrderRepository.updateOne({ id, isArchived: true })
+  lookupService.increment({ key: 'archivedSalesOrderCount', value: 1 })
 }
 
 export const cancel = (data) => {
