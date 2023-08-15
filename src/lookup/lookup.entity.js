@@ -19,6 +19,10 @@ const transformToLookupEntity = (schema) => {
     value = JSON.parse(schema.value)
   }
 
+  if (schema.value === null) {
+    value = null
+  }
+
   return {
     [key]: value
   }
