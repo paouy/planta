@@ -70,11 +70,6 @@ export const getAllReleased = () => {
   return productionOrders
 }
 
-export const getAllReleasedCount = () => {
-  const count = lookupService.getValue('releasedProductionOrderCount')
-  return count
-}
-
 export const updateOne = (data) => {
   return productionOrderRepository.updateOne(data)
 }

@@ -37,11 +37,6 @@ export const getAllArchived = () => {
   return salesOrders
 }
 
-export const getAllArchivedCount = () => {
-  const count = lookupService.getValue('archivedSalesOrderCount')
-  return count
-}
-
 export const getAllNotArchived = () => {
   const salesOrders = salesOrderRepository
     .findAllNotArchived()
