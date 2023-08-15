@@ -16,6 +16,11 @@ export const createOne = ({ items, ...data }) => {
 
   salesOrderItemService.createMany(salesOrderItems)
 
+  lookupService.updateOne({
+    key: 'lastSalesOrderPublicId',
+    value: salesOrder.publicId
+  })
+
   return salesOrder
 }
 

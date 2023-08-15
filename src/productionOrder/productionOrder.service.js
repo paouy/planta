@@ -16,7 +16,8 @@ export const createOne = (data) => {
 
   data.priority = (lastPriorityProductionOrder?.priority || 0) + 1000
   
-  const productionOrder = productionOrderRepository.insertOne(data)
+  const insertedRow = productionOrderRepository.insertOne(data)
+  const productionOrder = transformToProductionOrderEntity(insertedRow)
 
   const product = productService.getOne(data.product.id)
 
@@ -29,7 +30,12 @@ export const createOne = (data) => {
 
   jobService.createMany(jobsData)
 
-  return transformToProductionOrderEntity(productionOrder)
+  lookupService.updateOne({
+    key: 'lastProductionOrderPublicId',
+    value: productionOrder.publicId
+  })
+
+  return productionOrder
 }
 
 export const getOne = (id) => {
