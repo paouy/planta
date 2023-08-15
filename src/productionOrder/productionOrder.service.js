@@ -1,6 +1,7 @@
 import { allocationService } from '../allocation/index.js'
 import { jobService } from '../job/index.js'
 import { materialService } from '../material/index.js'
+import { lookupService } from '../lookup/index.js'
 import { operationBatchJobService } from '../operationBatchJob/index.js'
 import { productService } from '../product/index.js'
 import { productMaterialService } from '../productMaterial/index.js'
@@ -69,6 +70,11 @@ export const getAllReleased = () => {
   return productionOrders
 }
 
+export const getAllReleasedCount = () => {
+  const count = lookupService.getValue('releasedProductionOrderCount')
+  return count
+}
+
 export const updateOne = (data) => {
   return productionOrderRepository.updateOne(data)
 }
@@ -121,4 +127,5 @@ export const release = async (id) => {
   }
 
   productionOrderRepository.updateOne({ id, isReleased: true })
+  lookupService.increment({ key: 'releasedProductionOrderCount', value: 1 })
 }
