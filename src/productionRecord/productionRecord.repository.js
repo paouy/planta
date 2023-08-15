@@ -12,6 +12,7 @@ const insertOne = (data) => {
         operation_id,
         workstation_id,
         equipment_id,
+        worker_id,
         type,
         qty,
         time_taken_mins
@@ -22,6 +23,7 @@ const insertOne = (data) => {
         @operation_id,
         @workstation_id,
         @equipment_id,
+        @worker_id,
         @type,
         @qty,
         @time_taken_mins
@@ -44,12 +46,16 @@ const findOne = (id) => {
       pr.operation_id,
       pr.workstation_id,
       pr.equipment_id,
+      pr.worker_id,
       pr.type,
       pr.qty,
       pr.time_taken_mins,
       o.name as operation_name,
       w.name as workstation_name,
-      e.name as equipment_name
+      e.name as equipment_name,
+      wkr.public_id as worker_public_id,
+      wkr.first_name as worker_first_name,
+      wkr.last_name as worker_last_name
     from
       production_records pr
     join
@@ -64,6 +70,10 @@ const findOne = (id) => {
       equipments e
     on
       pr.equipment_id = e.id
+    left join
+      workers wkr
+    on
+      pr.worker_id = wkr.id
     where
       pr.id = ?
   `)
@@ -81,12 +91,16 @@ const findAllByProductionOrderId = (productionOrderId) => {
       pr.operation_id,
       pr.workstation_id,
       pr.equipment_id,
+      pr.worker_id,
       pr.type,
       pr.qty,
       pr.time_taken_mins,
       o.name as operation_name,
       w.name as workstation_name,
-      e.name as equipment_name
+      e.name as equipment_name,
+      wkr.public_id as worker_public_id,
+      wkr.first_name as worker_first_name,
+      wkr.last_name as worker_last_name
     from
       production_records pr
     join
@@ -101,6 +115,10 @@ const findAllByProductionOrderId = (productionOrderId) => {
       equipments e
     on
       pr.equipment_id = e.id
+    left join
+      workers wkr
+    on
+      pr.worker_id = wkr.id
     where
       pr.production_order_id = ?
     order by

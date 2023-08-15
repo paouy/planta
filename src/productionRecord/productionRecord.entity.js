@@ -7,12 +7,16 @@ const transformToProductionRecordEntity = (schema) => {
     operation_id,
     workstation_id,
     equipment_id,
+    worker_id,
     type,
     qty,
     operation_name,
     workstation_name,
     equipment_name,
-    time_taken_mins
+    time_taken_mins,
+    worker_public_id,
+    worker_first_name,
+    worker_last_name
   } = schema
 
   const productionRecord = {
@@ -24,6 +28,7 @@ const transformToProductionRecordEntity = (schema) => {
     },
     workstation: null,
     equipment: null,
+    worker: null,
     type: type.toUpperCase(),
     qty: Number(qty),
     timeTakenMins: Number(time_taken_mins),
@@ -41,6 +46,13 @@ const transformToProductionRecordEntity = (schema) => {
     productionRecord.equipment = {
       id: equipment_id,
       name: equipment_name
+    }
+  }
+
+  if (worker_id && worker_public_id && worker_first_name && worker_last_name) {
+    productionRecord.worker = {
+      id: worker_id,
+      normalizedName: `${worker_last_name}, ${worker_first_name} — ${worker_public_id}`
     }
   }
 

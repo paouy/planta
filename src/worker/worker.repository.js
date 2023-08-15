@@ -1,54 +1,56 @@
 import { sql, setValues } from '../sqlite.js'
-import { mapToCategorySchema } from './category.schema.js'
+import { mapToWorkerSchema } from './worker.schema.js'
 
 const insertOne = (data) => {
-  data = mapToCategorySchema(data)
+  data = mapToWorkerSchema(data)
 
   const statement = sql(`
     insert into
-      categories (
+      workers (
         id,
-        name,
-        type
+        public_id,
+        first_name,
+        last_name
       )
       values (
         @id,
-        @name,
-        @type
+        @public_id,
+        @first_name,
+        @last_name
       )
     returning
       *
   `)
-
+  
   const result = statement.get(data)
 
   return result
 }
 
 const findAll = () => {
-  const statement = sql('select * from categories order by type, name')
+  const statement = sql('select * from workers order by last_name, first_name')
   const results = statement.all()
 
   return results
 }
 
 const updateOne = (data) => {
-  data = mapToCategorySchema(data)
+  data = mapToWorkerSchema(data)
 
-  const statement = sql(`update categories ${setValues(data)} where id = @id`)
+  const statement = sql(`update workers ${setValues(data)} where id = @id`)
   const result = statement.run(data)
 
   return result
 }
 
 const deleteOne = (id) => {
-  const statement = sql('delete from categories where id = ?')
+  const statement = sql('delete from workers where id = ?')
   const result = statement.run(id)
 
   return result
 }
 
-export const createCategoryRepository = () => {
+export const createWorkerRepository = () => {
   return {
     insertOne,
     findAll,

@@ -16,6 +16,7 @@ import { productionRecordRoutes } from './productionRecord/index.js'
 import { productMaterialRoutes } from './productMaterial/index.js'
 import { salesOrderRoutes } from './salesOrder/index.js'
 import { salesOrderItemRoutes } from './salesOrderItem/index.js'
+import { workerRoutes } from './worker/index.js'
 import { workstationRoutes } from './workstation/index.js'
 import { miscRoutes } from './misc/index.js'
 
@@ -37,6 +38,7 @@ export default fastifyPlugin((app, options, done) => {
   app.register(productMaterialRoutes, { prefix: '/api/v1/product-materials' })
   app.register(salesOrderRoutes, { prefix: '/api/v1/sales-orders' })
   app.register(salesOrderItemRoutes, { prefix: '/api/v1/sales-order-items' })
+  app.register(workerRoutes, { prefix: '/api/v1/workers' })
   app.register(workstationRoutes, { prefix: '/api/v1/workstations' })
   app.register(miscRoutes, { prefix: '/api/v1' })
 
