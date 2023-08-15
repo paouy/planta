@@ -1,16 +1,16 @@
 const mapToLookupSchema = (data) => {
-  const camelToSnake = (camelCaseString) => {
-    return camelCaseString.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`)
-  }
-
   const schema = {}
 
   if (data.key) {
-    schema.key = camelToSnake(data.key)
+    schema.key = data.key.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`)
   }
 
   if (data.value) {
     schema.value = data.value
+  }
+
+  if (data.type) {
+    schema.type = data.type.toUpperCase()
   }
 
   return schema

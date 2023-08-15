@@ -3,17 +3,27 @@ import { transformToLookupEntity } from './lookup.entity.js'
 
 const lookupRepository = createLookupRepository()
 
-export const getValue = (key) => {
+export const getOne = (key) => {
   const returnedRow = lookupRepository.findOne(key)
-  const value = transformToLookupEntity(returnedRow)
+  const lookup = transformToLookupEntity(returnedRow)
 
-  return value
+  return lookup
 }
 
-export const updateValue = ({ key, value }) => {
-  return lookupRepository.updateOne({ key, value })
+export const getMany = (keyArray) => {
+  const returnedRows = lookupRepository.findMany(keyArray)
+  const lookup = returnedRows.map(transformToLookupEntity).reduce((result, data) => {
+    Object.assign(result, data)
+    return result
+  }, {})
+
+  return lookup
 }
 
-export const increment = ({ key, value }) => {
-  return lookupRepository.increment({ key, value })
+export const updateOne = (data) => {
+  return lookupRepository.updateOne(data)
+}
+
+export const increment = (data) => {
+  return lookupRepository.increment(data)
 }

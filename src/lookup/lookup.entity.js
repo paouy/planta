@@ -1,24 +1,27 @@
 const transformToLookupEntity = (schema) => {
+  const key = schema.key.replace(/_([a-z])/g, (_, match) => match.toUpperCase())
   const type = schema.type.toLowerCase()
   let value
 
   if (type === 'string') {
-    value = String(value)
+    value = String(schema.value)
   }
 
   if (type === 'boolean') {
-    value = Boolean(value)
+    value = Boolean(schema.value)
   }
 
   if (type === 'number') {
-    value = Number(value)
+    value = Number(schema.value)
   }
 
   if (type === 'json') {
-    value = JSON.parse(value)
+    value = JSON.parse(schema.value)
   }
 
-  return value
+  return {
+    [key]: value
+  }
 }
 
 export {

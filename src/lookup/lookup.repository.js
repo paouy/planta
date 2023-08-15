@@ -2,12 +2,31 @@ import { sql } from '../sqlite.js'
 import { mapToLookupSchema } from './lookup.schema.js'
 
 const findOne = (key) => {
-  key = mapToLookupSchema(key)
+  key = mapToLookupSchema({ key })
 
-  const statement = sql('select value, type from lookup where key = ?')
+  const statement = sql('select key, value, type from lookup where key = @key')
   const result = statement.get(key)
 
   return result
+}
+
+const findMany = (keys) => {
+  keys = keys.map(key => mapToLookupSchema({ key }).key)
+
+  const statement = sql(`
+    select
+      key,
+      value,
+      type
+    from
+      lookup
+    where
+      key in (${keys.map(() => '?').join(',')})
+  `)
+
+  const results = statement.all(keys)
+
+  return results
 }
 
 const updateOne = (data) => {
@@ -43,6 +62,7 @@ const increment = (data) => {
 export const createLookupRepository = () => {
   return {
     findOne,
+    findMany,
     updateOne,
     increment
   }
