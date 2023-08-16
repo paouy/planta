@@ -7,6 +7,7 @@ const transformToProductionOrderEntity = (schema) => {
     product_name,
     product_uom,
     status,
+    is_released,
     qty,
     priority,
     due_date,
@@ -32,6 +33,10 @@ const transformToProductionOrderEntity = (schema) => {
 
   if (seq) {
     productionOrder.seq = Number(seq)
+  }
+
+  if (is_released) {
+    productionOrder.isReleased = Boolean(is_released)
   }
 
   if (sales_order_item_id) {

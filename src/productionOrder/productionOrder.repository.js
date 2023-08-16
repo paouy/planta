@@ -59,6 +59,7 @@ const findOne = (id) => {
       po.priority,
       po.due_date,
       po.sales_order_item_id,
+      po.is_released,
       p.sku as product_sku,
       p.name as product_name,
       p.uom as product_uom,
@@ -263,6 +264,16 @@ const findAllNotReleasedBySalesOrderId = (salesOrderId) => {
 
 const findAllReleased = () => {
   const statement = sql(`
+    with last_jobs as (
+      select
+        production_order_id,
+        max(seq) AS seq
+      from
+        jobs
+      group by
+        production_order_id
+    )
+    
     select
       po.id,
       po.public_id,
@@ -274,13 +285,26 @@ const findAllReleased = () => {
       po.sales_order_item_id,
       p.sku as product_sku,
       p.name as product_name,
-      p.uom as product_uom
+      p.uom as product_uom,
+      (j.qty_output - j.qty_reject + j.qty_rework) as qty_made
     from
       production_orders po
     join
       products p
     on
       po.product_id = p.id
+    join
+      last_jobs lj
+    on
+      po.id = lj.production_order_id
+    left join
+      jobs j
+    on
+      j.production_order_id = lj.production_order_id
+    and
+      j.seq = lj.seq
+    and
+      j.status = 'CLOSED'
     where
       po.is_released = 1
     order by
