@@ -128,5 +128,6 @@ export const release = async (id) => {
   }
 
   productionOrderRepository.updateOne({ id, isReleased: true })
+  
   lookupService.increment({ key: 'releasedProductionOrderCount', value: 1 })
 }
