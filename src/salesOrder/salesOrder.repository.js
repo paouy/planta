@@ -39,6 +39,7 @@ const findOne = (id) => {
       so.customer_id,
       so.date,
       so.status,
+      so.is_archived,
       c.short_name as customer_short_name
     from
       sales_orders so
@@ -57,19 +58,41 @@ const findOne = (id) => {
 
 const findAllArchived = () => {
   const statement = sql(`
+    with
+      related_sales_order_items as (
+        select
+          count(soi.id) as count,
+          soi.sales_order_id
+        from
+          sales_order_items soi
+        join
+          sales_orders so
+        on
+          soi.sales_order_id = so.id
+        and
+          so.is_archived = true
+        group by
+          soi.sales_order_id
+      )
+
     select
       so.id,
       so.public_id,
       so.customer_id,
       so.date,
       so.status,
-      c.short_name as customer_short_name
+      c.short_name as customer_short_name,
+      soi.count as item_count
     from
       sales_orders so
     join
       customers c
     on
       so.customer_id = c.id
+    left join
+      related_sales_order_items soi
+    on
+      so.id = soi.sales_order_id
     where
       so.is_archived = true
     order by

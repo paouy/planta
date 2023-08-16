@@ -5,6 +5,7 @@ const transformToSalesOrderEntity = (schema) => {
     customer_id,
     date,
     status,
+    is_archived,
     customer_short_name,
     item_count
   } = schema
@@ -21,6 +22,10 @@ const transformToSalesOrderEntity = (schema) => {
 
   if (customer_short_name) {
     salesOrder.customer.shortName = customer_short_name
+  }
+
+  if (is_archived) {
+    salesOrder.isArchived = Boolean(is_archived)
   }
 
   if (item_count) {
