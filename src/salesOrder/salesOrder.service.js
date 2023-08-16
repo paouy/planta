@@ -89,7 +89,9 @@ export const forceFulfilledStatus = (id) => {
 
 export const archive = (id) => {
   allocationService.deleteManyBySalesOrder(id)
+
   salesOrderRepository.updateOne({ id, isArchived: true })
+
   lookupService.increment({ key: 'archivedSalesOrderCount', value: 1 })
 }
 
@@ -107,4 +109,6 @@ export const cancel = (data) => {
   jobService.cancelNotClosedBySalesOrder(data.id)
 
   salesOrderRepository.updateOne({ ...data, isArchived: true })
+  
+  lookupService.increment({ key: 'archivedSalesOrderCount', value: 1 })
 }
