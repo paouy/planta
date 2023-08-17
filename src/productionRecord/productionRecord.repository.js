@@ -98,6 +98,7 @@ const findAllBetweenIds = (data) => {
       pr.qty,
       pr.time_taken_mins,
       po.public_id as production_order_public_id,
+      p.sku as product_sku,
       o.name as operation_name,
       o.is_batch as operation_is_batch,
       o.time_per_cycle_mins as operation_time_per_cycle_mins,
@@ -112,6 +113,10 @@ const findAllBetweenIds = (data) => {
       production_orders po
     on
       pr.production_order_id = po.id
+    join
+      products p
+    on
+      po.product_id = p.id
     join
       operations o
     on

@@ -11,6 +11,7 @@ const transformToProductionRecordEntity = (schema) => {
     type,
     qty,
     production_order_public_id,
+    product_sku,
     operation_name,
     operation_is_batch,
     operation_time_per_cycle_mins,
@@ -40,6 +41,10 @@ const transformToProductionRecordEntity = (schema) => {
 
   if (production_order_public_id) {
     productionRecord.productionOrderPublicId = production_order_public_id
+  }
+
+  if (product_sku) {
+    productionRecord.productSku = product_sku
   }
 
   if (workstation_id && workstation_name) {
