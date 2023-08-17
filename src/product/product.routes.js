@@ -1,6 +1,8 @@
+import { verifyToken } from '../hooks.js'
 import * as productHandlers from './product.handlers.js'
 
 const productRoutes = (app, options, done) => {
+  app.addHook('preHandler', verifyToken)
   app.post('/', productHandlers.createOne)
   app.post('/:id/increment', productHandlers.increment)
   app.get('/:id', productHandlers.getOne)

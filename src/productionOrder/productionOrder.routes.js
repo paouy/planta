@@ -1,6 +1,8 @@
+import { verifyToken } from '../hooks.js'
 import * as productionOrderHandlers from './productionOrder.handlers.js'
 
 const productionOrderRoutes = (app, options, done) => {
+  app.addHook('preHandler', verifyToken)
   app.post('/', productionOrderHandlers.createOne)
   app.post('/:id/cancel', productionOrderHandlers.cancel)
   app.post('/:id/release', productionOrderHandlers.release)

@@ -1,6 +1,10 @@
 import * as categoryService from './category.service.js'
 
 export const createOne = (request, reply) => {
+  if (!request.user.isAdmin) {
+    return reply.code(401).send({ error: 'Unauthorized' })
+  }
+
   const data = request.body
   const category = categoryService.createOne(data)
 
@@ -14,6 +18,10 @@ export const getAll = (request, reply) => {
 }
 
 export const updateOne = (request, reply) => {
+  if (!request.user.isAdmin) {
+    return reply.code(401).send({ error: 'Unauthorized' })
+  }
+
   const data = request.body
   categoryService.updateOne(data)
 
@@ -21,6 +29,10 @@ export const updateOne = (request, reply) => {
 }
 
 export const deleteOne = (request, reply) => {
+  if (!request.user.isAdmin) {
+    return reply.code(401).send({ error: 'Unauthorized' })
+  }
+  
   const { id } = request.params
   categoryService.deleteOne(id)
 
