@@ -10,7 +10,8 @@ const transformToWorkerEntity = (schema) => {
     id,
     publicId: public_id,
     firstName: first_name,
-    lastName: last_name
+    lastName: last_name,
+    name: `${last_name}, ${first_name} — ${public_id}`
   }
 
   return worker
