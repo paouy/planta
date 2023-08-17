@@ -7,18 +7,26 @@ export const createOne = (request, reply) => {
   return reply.send(productionRecord)
 }
 
-export const getAllByProductionOrder = (request, reply) => {
-  const { productionOrderId } = request.query
+export const getAll = (request, reply) => {
+  const { from, to, productionOrderId } = request.query
 
-  if (!productionOrderId) {
+  if (!from && !to && !productionOrderId) {
     return reply.code(400).send({
       error: 'Bad Request',
-      message: 'Missing required query parameter: productionOrderId',
+      message: 'Missing required query parameter: from or to or productionOrderId',
       statusCode: 400
     })
   }
 
-  const productionRecords = productionRecordService.getAllByProductionOrder(productionOrderId)
+  let productionRecords
+
+  if (from || to) {
+    productionRecords = productionRecordService.getAllBetweenTimestamps(from, to)
+  }
+
+  if (productionOrderId) {
+    productionRecords = productionRecordService.getAllByProductionOrder(productionOrderId)
+  }
 
   return reply.send(productionRecords)
 }

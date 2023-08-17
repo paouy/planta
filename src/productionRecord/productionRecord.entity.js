@@ -10,7 +10,10 @@ const transformToProductionRecordEntity = (schema) => {
     worker_id,
     type,
     qty,
+    production_order_public_id,
     operation_name,
+    operation_is_batch,
+    operation_time_per_cycle_mins,
     workstation_name,
     equipment_name,
     time_taken_mins,
@@ -35,6 +38,10 @@ const transformToProductionRecordEntity = (schema) => {
     timestamp: decodeTime(id)
   }
 
+  if (production_order_public_id) {
+    productionRecord.productionOrderPublicId = production_order_public_id
+  }
+
   if (workstation_id && workstation_name) {
     productionRecord.workstation = {
       id: workstation_id,
@@ -52,7 +59,19 @@ const transformToProductionRecordEntity = (schema) => {
   if (worker_id && worker_public_id && worker_first_name && worker_last_name) {
     productionRecord.worker = {
       id: worker_id,
-      normalizedName: `${worker_last_name}, ${worker_first_name} — ${worker_public_id}`
+      name: `${worker_last_name}, ${worker_first_name} — ${worker_public_id}`
+    }
+  }
+
+  if (operation_time_per_cycle_mins) {
+    if (type.toUpperCase() !== 'REJECT') {
+      if (operation_is_batch) {
+        productionRecord.timeEstimatedMins = Number(operation_time_per_cycle_mins)
+      } else {
+        productionRecord.timeEstimatedMins = Number(qty) * Number(operation_time_per_cycle_mins)
+      }
+    } else {
+      productionRecord.timeEstimatedMins = 0
     }
   }
 

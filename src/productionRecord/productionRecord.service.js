@@ -1,3 +1,4 @@
+import { ulid } from 'ulidx'
 import { jobService } from '../job/index.js'
 import { productionOrderService } from '../productionOrder/index.js'
 import { createProductionRecordRepository } from './productionRecord.repository.js'
@@ -50,6 +51,15 @@ export const createOne = (data, forcePauseProduction = false) => {
   productionOrderService.updateOne(productionOrder)
 
   return productionRecord
+}
+
+export const getAllBetweenTimestamps = (from, to) => {
+  const ids = { from: ulid(Number(from)), to: ulid(Number(to)) }
+  const productionRecords = productionRecordRepository
+    .findAllBetweenIds(ids)
+    .map(transformToProductionRecordEntity)
+
+  return productionRecords
 }
 
 export const getAllByProductionOrder = (productionOrderId) => {
