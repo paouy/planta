@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import Fastify from 'fastify'
+import cors from '@fastify/cors'
 import routes from './routes.js'
 
 const app = Fastify({
@@ -8,8 +9,9 @@ const app = Fastify({
       target: 'pino-pretty'
     }
   }
- })
+})
 
+app.register(cors)
 app.register(routes)
 
 const start = async () => {
