@@ -30,10 +30,12 @@ export const createOne = (data) => {
 
   jobService.createMany(jobsData)
 
-  lookupService.updateOne({
-    key: 'lastProductionOrderPublicId',
-    value: productionOrder.publicId
-  })
+  if (!productionOrder.salesOrderItemId) {
+    lookupService.updateOne({
+      key: 'lastProductionOrderPublicId',
+      value: productionOrder.publicId
+    })
+  }
 
   return productionOrder
 }
