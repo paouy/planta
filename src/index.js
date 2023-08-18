@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import { PORT } from './config.js'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import routes from './routes.js'
@@ -14,9 +15,9 @@ const app = Fastify({
 app.register(cors)
 app.register(routes)
 
-const start = async () => {
+const start = () => {
   try {
-    await app.listen({ port: 3000 })
+    app.listen({ port: PORT })
   } catch (err) {
     app.log.error(err)
     process.exit(1)
