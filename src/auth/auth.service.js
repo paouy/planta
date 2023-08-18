@@ -43,8 +43,16 @@ export const login = async ({ username, password }) => {
   }
 }
 
-export const updatePassword = async ({ id, password }) => {
-  const passwordHash = await bcrypt.hash(password, 10)
+export const changePassword = async ({ adminId, id, newPassword, password }) => {
+  const user = userService.getOne(adminId || id)
+
+  const isCorrectPassword = await bcrypt.compare(password, user.passwordHash)
+
+  if (!isCorrectPassword) {
+    throw new Error('Unauthorized')
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 10)
 
   userService.updateOne({ id, passwordHash })
 }
