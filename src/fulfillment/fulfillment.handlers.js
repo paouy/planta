@@ -7,18 +7,18 @@ export const createOne = (request, reply) => {
   return reply.code(201).send(fulfillment)
 }
 
-export const getAllBySalesOrderItem = (request, reply) => {
-  const { salesOrderItemId } = request.query
+export const getAllBySalesOrder = (request, reply) => {
+  const { salesOrderId } = request.query
 
-  if (!productId) {
+  if (!salesOrderId) {
     return reply.code(400).send({
       error: 'Bad Request',
-      message: 'Missing required query parameter: productId',
+      message: 'Missing required query parameter: salesOrderId',
       statusCode: 400
     })
   }
 
-  const fulfillments = fulfillmentService.getAllBySalesOrderItem(salesOrderItemId)
+  const fulfillments = fulfillmentService.getAllBySalesOrder(salesOrderId)
 
   return reply.send(fulfillments)
 }

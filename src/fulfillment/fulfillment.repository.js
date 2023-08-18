@@ -53,19 +53,35 @@ const findOne = (id) => {
   return result
 }
 
-const findAllBySalesOrderItemId = (salesOrderItemId) => {
+const findAllBySalesOrderId = (salesOrderId) => {
   const statement = sql(`
     select
-      *
+      f.id,
+      f.qty,
+      p.sku as product_sku,
+      p.name as product_name,
+      p.uom as product_uom
     from
-      fulfillments
+      fulfillments f
+    join
+      sales_order_items soi
+    on
+      f.sales_order_item_id = soi.id
+    join
+      products p
+    on
+      soi.product_id = p.id
+    join
+      sales_orders so
+    on
+      soi.sales_order_id = so.id
     where
-      sales_order_item_id = ?
+      so.id = ?
     order by
-      id
+      f.id
   `)
 
-  const results = statement.all(salesOrderItemId)
+  const results = statement.all(salesOrderId)
 
   return results
 }
@@ -81,7 +97,7 @@ export const createFulfillmentRepository = () => {
   return {
     insertOne,
     findOne,
-    findAllBySalesOrderItemId,
+    findAllBySalesOrderId,
     deleteOne
   }
 }

@@ -35,9 +35,9 @@ export const createOne = (data) => {
   })
 }
 
-export const getAllBySalesOrderItem = (salesOrderItemId) => {
+export const getAllBySalesOrder = (salesOrderId) => {
   const fulfillments = fulfillmentRepository
-    .findAllBySalesOrderItemId(salesOrderItemId)
+    .findAllBySalesOrderId(salesOrderId)
     .map(transformToFulfillmentEntity)
 
   return fulfillments
