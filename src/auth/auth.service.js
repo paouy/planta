@@ -29,6 +29,8 @@ export const login = async ({ username, password }) => {
 
   const token = jwt.sign({ id, isAdmin }, privateKey, { algorithm: 'ES256', expiresIn })
 
+  userService.updateOne({ id, lastLogin: Date.now() })
+
   return {
     user: {
       id,
@@ -39,4 +41,10 @@ export const login = async ({ username, password }) => {
     token,
     expiresIn
   }
+}
+
+export const updatePassword = async ({ id, password }) => {
+  const passwordHash = await bcrypt.hash(password, 10)
+
+  userService.updateOne({ id, passwordHash })
 }

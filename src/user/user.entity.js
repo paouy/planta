@@ -6,7 +6,8 @@ const transformToUserEntity = (schema) => {
     username,
     password_hash,
     is_admin,
-    is_disabled
+    is_disabled,
+    last_login
   } = schema
 
   const user = {
@@ -14,9 +15,13 @@ const transformToUserEntity = (schema) => {
     firstName: first_name,
     lastName: last_name,
     username: username,
-    passwordHash: password_hash,
     isAdmin: Boolean(is_admin),
-    isDisabled: Boolean(is_disabled)
+    isDisabled: Boolean(is_disabled),
+    lastLogin: last_login || null
+  }
+
+  if (password_hash) {
+    user.passwordHash = password_hash
   }
 
   return user

@@ -16,3 +16,15 @@ export const login = async (request, reply) => {
     }
   }
 }
+
+export const updatePassword = async (request, reply) => {
+  const data = request.body
+
+  if (!request.user.isAdmin) {
+    data.id = request.user.id
+  }
+
+  await authService.updatePassword(data)
+
+  return reply.code(204).send()
+}

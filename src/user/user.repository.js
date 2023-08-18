@@ -12,8 +12,7 @@ const insertOne = (data) => {
         last_name,
         username,
         password_hash,
-        is_admin,
-        is_disabled
+        is_admin
       )
       values (
         @id,
@@ -21,12 +20,17 @@ const insertOne = (data) => {
         @last_name,
         @username,
         @password_hash,
-        @is_admin,
-        @is_disabled
+        @is_admin
       )
+    returning
+      id,
+      first_name,
+      last_name,
+      is_admin,
+      is_disabled
   `)
   
-  const result = statement.run(data)
+  const result = statement.get(data)
 
   return result
 }
@@ -52,7 +56,8 @@ const findAll = () => {
       first_name,
       last_name,
       is_admin,
-      is_disabled
+      is_disabled,
+      last_login
     from
       users
     order by

@@ -5,18 +5,19 @@ import { transformToUserEntity } from './user.entity.js'
 const userRepository = createUserRepository()
 
 export const createOne = async (data) => {
-  const { firstName, lastName, username, isAdmin, isDisabled, password } = data
+  const { firstName, lastName, username, isAdmin, password } = data
 
   const passwordHash = await bcrypt.hash(password, 10)
 
-  return userRepository.insertOne({
+  const insertedRow = userRepository.insertOne({
     firstName,
     lastName,
     username,
     passwordHash,
-    isAdmin,
-    isDisabled
+    isAdmin
   })
+
+  return transformToUserEntity(insertedRow)
 }
 
 export const getOne = (id) => {
@@ -43,7 +44,7 @@ export const getAll = () => {
   return users
 }
 
-export const updateOne = ({ passwordHash, ...data }) => {
+export const updateOne = (data) => {
   return userRepository.updateOne(data)
 }
 

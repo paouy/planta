@@ -1,5 +1,16 @@
 import * as userService from './user.service.js'
 
+export const createOne = async (request, reply) => {
+  if (!request.user.isAdmin) {
+    return reply.code(401).send({ error: 'Unauthorized' })
+  }
+
+  const data = request.body
+  const user = await userService.createOne(data)
+
+  return reply.send(user)
+}
+
 export const getAll = (request, reply) => {
   if (!request.user.isAdmin) {
     return reply.code(401).send({ error: 'Unauthorized' })
@@ -15,7 +26,10 @@ export const updateOne = (request, reply) => {
 
   if (!request.user.isAdmin) {
     data.id = request.user.id
+    data.isAdmin = false
   }
+
+  delete data.passwordHash
 
   userService.updateOne(data)
 

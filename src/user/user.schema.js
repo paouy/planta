@@ -33,6 +33,10 @@ const mapToUserSchema = (data) => {
     schema.is_disabled = Number(data.isDisabled)
   }
 
+  if ('lastLogin' in data) {
+    schema.last_login = Number(data.lastLogin)
+  }
+
   return schema
 }
 
