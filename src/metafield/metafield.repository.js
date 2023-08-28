@@ -37,8 +37,8 @@ const findAll = () => {
 }
 
 const findAllByResource = (resource) => {
-  const statement = sql('select * from metafields where resource = ? order by name')
-  const results = statement.all(resource)
+  const statement = sql('select * from metafields where resource like ? order by name')
+  const results = statement.all(`%${resource}%`)
 
   return results
 }

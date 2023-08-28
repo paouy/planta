@@ -1,5 +1,6 @@
 import { ulid } from 'ulidx'
 import { jobService } from '../job/index.js'
+import { metafieldService } from '../metafield/index.js'
 import { productionOrderService } from '../productionOrder/index.js'
 import { createProductionRecordRepository } from './productionRecord.repository.js'
 import { transformToProductionRecordEntity } from './productionRecord.entity.js'
@@ -51,17 +52,39 @@ export const createOne = (data, forcePauseJob = false) => {
 
 export const getAllBetweenTimestamps = (from, to) => {
   const ids = { from: ulid(Number(from)), to: ulid(Number(to)) }
+  const metafields = metafieldService.getAllByResource('OPERATION')
   const productionRecords = productionRecordRepository
     .findAllBetweenIds(ids)
     .map(transformToProductionRecordEntity)
+    .map(productionRecord => {
+      if (productionRecord.meta) {
+        Object.keys(productionRecord.meta).forEach(id => {
+          const { name } = metafields.find(metafield => id === metafield.id)
+          productionRecord.meta[id].label = name
+        })
+      }
+
+      return productionRecord
+    })
 
   return productionRecords
 }
 
 export const getAllByProductionOrder = (productionOrderId) => {
+  const metafields = metafieldService.getAllByResource('OPERATION')
   const productionRecords = productionRecordRepository
     .findAllByProductionOrderId(productionOrderId)
     .map(transformToProductionRecordEntity)
+    .map(productionRecord => {
+      if (productionRecord.meta) {
+        Object.keys(productionRecord.meta).forEach(id => {
+          const { name } = metafields.find(metafield => id === metafield.id)
+          productionRecord.meta[id].label = name
+        })
+      }
+
+      return productionRecord
+    })
 
   return productionRecords
 }
