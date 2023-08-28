@@ -7,6 +7,7 @@ const transformToProductEntity = (schema) => {
     name,
     operation_ids,
     uom,
+    meta,
     qty_available,
     qty_wip = 0,
     qty_allocated = 0
@@ -23,6 +24,7 @@ const transformToProductEntity = (schema) => {
       name: category_name
     },
     uom,
+    meta: meta ? JSON.parse(meta) : null,
     qtyAvailable: Number(qty_available),
     qtyWip: Number(qty_wip),
     qtyAllocated: Number(qty_allocated)
