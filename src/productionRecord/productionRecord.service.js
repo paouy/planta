@@ -13,7 +13,6 @@ export const createOne = (data, forcePauseJob = false) => {
 
   const jobs = jobService.getAllByProductionOrder(productionRecord.productionOrderId)
   const job = jobs.find(({ operation }) => productionRecord.operation.id === operation.id)
-  const prevJob = jobs.find(({ seq }) => job.seq === seq + 1)
 
   const keys = {
     OUTPUT: 'qtyOutput',
@@ -30,11 +29,41 @@ export const createOne = (data, forcePauseJob = false) => {
 
   job.status = qtyMade >= qtyDemand ? 'CLOSED' : 'IN_PROGRESS'
 
-  if (job.operation.isBatch && job.status === 'CLOSED') {
-    job.workstation = null
+  const prevJob = jobs.find(({ seq }) => job.seq === seq + 1)
+  const nextJob = jobs.find(({ seq }) => job.seq === seq - 1)
+
+  if (nextJob) {
+    nextJob.qtyInput = qtyMade
   }
 
-  if ((job.status === 'CLOSED' && job.seq > 1 && prevJob?.status !== 'CLOSED') || forcePauseJob) {
+  if (job.status === 'CLOSED') {
+    if (job.operation.isBatch) {
+      job.workstation = null
+    }
+
+    if (job.seq > 1) {
+  
+      if (prevJob.status !== 'CLOSED') {
+        job.status = 'PAUSED'
+      }
+  
+      if (nextJob) {
+        const nextJobQtyMade = nextJob.qtyOutput - nextJob.qtyReject + nextJob.qtyRework
+        const nextJobQtyDemand = nextJob.qtyInput - nextJob.qtyShortfall
+  
+        if (nextJobQtyMade >= nextJobQtyDemand) {
+          nextJob.status = 'CLOSED'
+
+          jobService.updateOne({
+            id: nextJob.id,
+            status: nextJob.status
+          })
+        }
+      }
+    }
+  }
+
+  if (forcePauseJob) {
     job.status = 'PAUSED'
   }
 
