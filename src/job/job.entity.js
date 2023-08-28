@@ -33,7 +33,8 @@ const transformToJobEntity = (schema) => {
     },
     operation: {
       id: operation_id,
-      name: operation_name
+      name: operation_name,
+      isBatch: Boolean(operation_is_batch)
     },
     workstation: null,
     status,

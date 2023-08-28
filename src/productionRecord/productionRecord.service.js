@@ -30,6 +30,10 @@ export const createOne = (data, forcePauseJob = false) => {
 
   job.status = qtyMade >= qtyDemand ? 'CLOSED' : 'IN_PROGRESS'
 
+  if (job.operation.isBatch && job.status === 'CLOSED') {
+    job.workstation = null
+  }
+
   if ((job.status === 'CLOSED' && job.seq > 1 && prevJob?.status !== 'CLOSED') || forcePauseJob) {
     job.status = 'PAUSED'
   }
