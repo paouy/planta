@@ -12,7 +12,11 @@ export const createOne = (request, reply) => {
 }
 
 export const getAll = (request, reply) => {
-  const metafields = metafieldService.getAll()
+  const { resource } = request.query
+
+  const metafields = resource
+    ? metafieldService.getAllByResource(resource)
+    : metafieldService.getAll()
 
   return reply.send(metafields)
 }

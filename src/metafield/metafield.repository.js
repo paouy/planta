@@ -30,8 +30,15 @@ const insertOne = (data) => {
 }
 
 const findAll = () => {
-  const statement = sql('select * from metafields order by name, resource')
+  const statement = sql('select * from metafields order by resource, name')
   const results = statement.all()
+
+  return results
+}
+
+const findAllByResource = (resource) => {
+  const statement = sql('select * from metafields where resource = ? order by name')
+  const results = statement.all(resource)
 
   return results
 }
@@ -56,6 +63,7 @@ export const createMetafieldRepository = () => {
   return {
     insertOne,
     findAll,
+    findAllByResource,
     updateOne,
     deleteOne
   }
