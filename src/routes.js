@@ -8,6 +8,7 @@ import { fulfillmentRoutes } from './fulfillment/index.js'
 import { jobRoutes } from './job/index.js'
 import { lookupRoutes } from './lookup/index.js'
 import { materialRoutes } from './material/index.js'
+import { metafieldRoutes } from './metafield/index.js'
 import { miscRoutes } from './misc/index.js'
 import { operationRoutes } from './operation/index.js'
 import { operationBatchRoutes } from './operationBatch/index.js'
@@ -32,6 +33,7 @@ export default fastifyPlugin((app, options, done) => {
   app.register(jobRoutes, { prefix: '/api/v1/jobs' })
   app.register(lookupRoutes, { prefix: '/api/v1/lookup' })
   app.register(materialRoutes, { prefix: '/api/v1/materials' })
+  app.register(metafieldRoutes, { prefix: '/api/v1/metafields' })
   app.register(miscRoutes, { prefix: '/api/v1' })
   app.register(operationRoutes, { prefix: '/api/v1/operations' })
   app.register(operationBatchRoutes, { prefix: '/api/v1/operation-batches' })
