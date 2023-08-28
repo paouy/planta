@@ -6,17 +6,13 @@ import { transformToProductionRecordEntity } from './productionRecord.entity.js'
 
 const productionRecordRepository = createProductionRecordRepository()
 
-export const createOne = (data, forcePauseProduction = false) => {
+export const createOne = (data, forcePauseJob = false) => {
   const insertedRow = productionRecordRepository.insertOne(data)
   const productionRecord = transformToProductionRecordEntity(insertedRow)
 
   const jobs = jobService.getAllByProductionOrder(productionRecord.productionOrderId)
-
-  const job = jobs.find(
-    ({ productionOrder, operation }) =>
-      productionRecord.productionOrderId === productionOrder.id &&
-      productionRecord.operation.id === operation.id
-  )
+  const job = jobs.find(({ operation }) => productionRecord.operation.id === operation.id)
+  const prevJob = jobs.find(({ seq }) => job.seq === seq + 1)
 
   const keys = {
     OUTPUT: 'qtyOutput',
@@ -26,12 +22,16 @@ export const createOne = (data, forcePauseProduction = false) => {
   }
 
   job[keys[productionRecord.type]] += productionRecord.qty
+  job.timeTakenMins += productionRecord.timeTakenMins
 
   const qtyMade = job.qtyOutput - job.qtyReject + job.qtyRework
   const qtyDemand = job.qtyInput - job.qtyShortfall
 
   job.status = qtyMade >= qtyDemand ? 'CLOSED' : 'IN_PROGRESS'
-  job.timeTakenMins += productionRecord.timeTakenMins
+
+  if ((job.status === 'CLOSED' && job.seq > 1 && prevJob?.status !== 'CLOSED') || forcePauseJob) {
+    job.status = 'PAUSED'
+  }
 
   const productionOrderStatus =
     jobs.some(job => job.status !== 'CLOSED')
@@ -41,10 +41,6 @@ export const createOne = (data, forcePauseProduction = false) => {
   const productionOrder = {
     id: productionRecord.productionOrderId,
     status: productionOrderStatus
-  }
-
-  if (forcePauseProduction) {
-    productionOrder.status = job.status = 'PAUSED'
   }
 
   jobService.updateOne(job)

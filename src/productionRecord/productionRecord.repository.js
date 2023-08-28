@@ -135,6 +135,8 @@ const findAllBetweenIds = (data) => {
       pr.worker_id = wkr.id
     where
       ${condition}
+    and
+      pr.type != 'SHORTFALL'
   `)
 
   const results = statement.all(data)
@@ -180,6 +182,8 @@ const findAllByProductionOrderId = (productionOrderId) => {
       pr.worker_id = wkr.id
     where
       pr.production_order_id = ?
+    and
+      pr.type != 'SHORTFALL'
     order by
       pr.id,
       o.seq

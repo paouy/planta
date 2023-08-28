@@ -211,8 +211,6 @@ const findAllWithProductionOrderNotReleased = ()=> {
       j.production_order_id = pj.production_order_id
     and
       j.seq = pj.seq + 1
-    and
-      pj.status = 'CLOSED'
     left join
       operation_batch_jobs_not_closed obj
     on
