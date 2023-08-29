@@ -1,6 +1,6 @@
 # planta
 
-Backend for Planta OS
+Backend for Planta
 
 ## Environment Variables
 
