@@ -250,7 +250,7 @@ if (!initialized) {
     ('last_sales_order_public_id','','STRING');
 
     insert into 'users' ('id','first_name','last_name','username','password_hash','is_admin','is_disabled','last_login') values
-    ('01H823FBJ3TX61V8BKDZFY825H','Geoff','Tan','admin','$2a$10$rq.41MlEn43j9.zxzRKtc.LX9YayanYF1xShSZKlOGkagDWILAE2i',1,0,null);
+    ('01H823FBJ3TX61V8BKDZFY825H','Geoff','Tan','admin','$2y$10$IZjgkjhVG8fICvHd6mn38uP9IVXCKy9j848Vv/D0CwGlpBwqpartS',1,0,null);
 
     commit;
   `)
