@@ -240,7 +240,7 @@ if (!initialized) {
       foreign key('workstation_id') references 'workstations'('id') on delete set null,
       primary key('id'),
       foreign key('worker_id') references 'workers'('id') on delete set null
-    )
+    );
 
     insert into 'lookup' ('key','value','type') values 
     ('organization_name','GICA Abrasives','STRING'),
