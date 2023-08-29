@@ -83,6 +83,12 @@ export const createOne = (data, forcePauseJob = false) => {
   return productionRecord
 }
 
+export const createMany = async (data) => {
+  data.forEach(async (productionRecord) => {
+    await createOne(productionRecord)
+  })
+}
+
 export const getAllBetweenTimestamps = (from, to) => {
   const ids = { from: ulid(Number(from)), to: ulid(Number(to)) }
   const metafields = metafieldService.getAllByResource('OPERATION')
