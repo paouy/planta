@@ -13,6 +13,7 @@ const insertOne = (data) => {
         name,
         operation_ids,
         uom,
+        meta,
         qty_available
       )
       values (
@@ -22,6 +23,7 @@ const insertOne = (data) => {
         @name,
         @operation_ids,
         @uom,
+        @meta,
         @qty_available
       )
     returning
@@ -67,6 +69,7 @@ const findOne = (id) => {
       p.name,
       p.operation_ids,
       p.uom,
+      p.meta,
       p.qty_available,
       c.name as category_name,
       prd.qty as qty_wip,
@@ -131,6 +134,7 @@ const findAll = () => {
       p.name,
       p.operation_ids,
       p.uom,
+      p.meta,
       p.qty_available,
       c.name as category_name,
       prd.qty as qty_wip,

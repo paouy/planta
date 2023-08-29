@@ -1,18 +1,29 @@
+import { metafieldService } from '../metafield/index.js'
 import { createProductRepository } from './product.repository.js'
 import { transformToProductEntity } from './product.entity.js'
 
 const productRepository = createProductRepository()
 
 export const createOne = (data) => {
-  const product = productRepository.insertOne(data)
+  const insertedRow = productRepository.insertOne(data)
 
-  return transformToProductEntity(product)
+  return transformToProductEntity(insertedRow)
 }
 
 export const getOne = (id) => {
-  const product = productRepository.findOne(id)
+  const returnedRow = productRepository.findOne(id)
+  const product = transformToProductEntity(returnedRow)
 
-  return transformToProductEntity(product)
+  if (product.meta) {
+    const metafields = metafieldService.getAllByResource('PRODUCT')
+
+    Object.keys(product.meta).forEach(id => {
+      const { name } = metafields.find(metafield => id === metafield.id)
+      product.meta[id].label = name
+    })
+  }
+
+  return product
 }
 
 export const getAll = () => {

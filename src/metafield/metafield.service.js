@@ -17,6 +17,14 @@ export const getAll = () => {
   return metafields
 }
 
+export const getAllByResource = (resource) => {
+  const metafields = metafieldRepository
+    .findAllByResource(resource)
+    .map(transformToMetafieldEntity)
+
+  return metafields
+}
+
 export const updateOne = (data) => {
   return metafieldRepository.updateOne(data)
 }

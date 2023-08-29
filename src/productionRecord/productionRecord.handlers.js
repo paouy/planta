@@ -1,10 +1,17 @@
 import * as productionRecordService from './productionRecord.service.js'
 
-export const createOne = (request, reply) => {
+export const create = (request, reply) => {
   const data = request.body
-  const productionRecord = productionRecordService.createOne(data)
 
-  return reply.send(productionRecord)
+  if (Array.isArray(data)) {
+    productionRecordService.createMany(data)
+
+    return reply.code(204).send()
+  } else {
+    const productionRecord = productionRecordService.createOne(data)
+
+    return reply.send(productionRecord)
+  }
 }
 
 export const getAll = (request, reply) => {

@@ -15,7 +15,8 @@ const insertOne = (data) => {
         worker_id,
         type,
         qty,
-        time_taken_mins
+        time_taken_mins,
+        meta
       )
       values (
         @id,
@@ -26,7 +27,8 @@ const insertOne = (data) => {
         @worker_id,
         @type,
         @qty,
-        @time_taken_mins
+        @time_taken_mins,
+        @meta
       )
     returning
       id
@@ -97,6 +99,7 @@ const findAllBetweenIds = (data) => {
       pr.type,
       pr.qty,
       pr.time_taken_mins,
+      pr.meta,
       po.public_id as production_order_public_id,
       p.sku as product_sku,
       o.name as operation_name,
@@ -135,6 +138,8 @@ const findAllBetweenIds = (data) => {
       pr.worker_id = wkr.id
     where
       ${condition}
+    and
+      pr.type != 'SHORTFALL'
   `)
 
   const results = statement.all(data)
@@ -154,6 +159,7 @@ const findAllByProductionOrderId = (productionOrderId) => {
       pr.type,
       pr.qty,
       pr.time_taken_mins,
+      pr.meta,
       o.name as operation_name,
       w.name as workstation_name,
       e.name as equipment_name,
@@ -180,6 +186,8 @@ const findAllByProductionOrderId = (productionOrderId) => {
       pr.worker_id = wkr.id
     where
       pr.production_order_id = ?
+    and
+      pr.type != 'SHORTFALL'
     order by
       pr.id,
       o.seq

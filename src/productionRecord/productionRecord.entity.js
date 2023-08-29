@@ -10,6 +10,7 @@ const transformToProductionRecordEntity = (schema) => {
     worker_id,
     type,
     qty,
+    meta,
     production_order_public_id,
     product_sku,
     operation_name,
@@ -36,7 +37,8 @@ const transformToProductionRecordEntity = (schema) => {
     type: type.toUpperCase(),
     qty: Number(qty),
     timeTakenMins: Number(time_taken_mins),
-    timestamp: decodeTime(id)
+    timestamp: decodeTime(id),
+    meta: meta ? JSON.parse(meta) : null
   }
 
   if (production_order_public_id) {

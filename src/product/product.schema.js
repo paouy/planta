@@ -29,6 +29,10 @@ const mapToProductSchema = (data) => {
     schema.qty_available = Number(data.qtyAvailable)
   }
 
+  if ('meta' in data) {
+    schema.meta = JSON.stringify(data.meta)
+  }
+
   if (!data.id) {
     schema.qty_available = 0
   }

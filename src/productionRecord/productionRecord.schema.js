@@ -13,6 +13,10 @@ const mapToProductionRecordSchema = (data) => {
     time_taken_mins: Number(data.timeTakenMins || 0)
   }
 
+  if ('meta' in data) {
+    schema.meta = JSON.stringify(data.meta)
+  }
+
   return schema
 }
 

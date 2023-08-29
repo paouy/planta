@@ -1,22 +1,18 @@
 import { ulid } from 'ulidx'
 import { jobService } from '../job/index.js'
+import { metafieldService } from '../metafield/index.js'
 import { productionOrderService } from '../productionOrder/index.js'
 import { createProductionRecordRepository } from './productionRecord.repository.js'
 import { transformToProductionRecordEntity } from './productionRecord.entity.js'
 
 const productionRecordRepository = createProductionRecordRepository()
 
-export const createOne = (data, forcePauseProduction = false) => {
+export const createOne = (data, forcePauseJob = false) => {
   const insertedRow = productionRecordRepository.insertOne(data)
   const productionRecord = transformToProductionRecordEntity(insertedRow)
 
   const jobs = jobService.getAllByProductionOrder(productionRecord.productionOrderId)
-
-  const job = jobs.find(
-    ({ productionOrder, operation }) =>
-      productionRecord.productionOrderId === productionOrder.id &&
-      productionRecord.operation.id === operation.id
-  )
+  const job = jobs.find(({ operation }) => productionRecord.operation.id === operation.id)
 
   const keys = {
     OUTPUT: 'qtyOutput',
@@ -26,12 +22,50 @@ export const createOne = (data, forcePauseProduction = false) => {
   }
 
   job[keys[productionRecord.type]] += productionRecord.qty
+  job.timeTakenMins += productionRecord.timeTakenMins
 
   const qtyMade = job.qtyOutput - job.qtyReject + job.qtyRework
   const qtyDemand = job.qtyInput - job.qtyShortfall
 
   job.status = qtyMade >= qtyDemand ? 'CLOSED' : 'IN_PROGRESS'
-  job.timeTakenMins += productionRecord.timeTakenMins
+
+  const prevJob = jobs.find(({ seq }) => job.seq === seq + 1)
+  const nextJob = jobs.find(({ seq }) => job.seq === seq - 1)
+
+  if (nextJob) {
+    nextJob.qtyInput = qtyMade
+  }
+
+  if (job.status === 'CLOSED') {
+    if (job.operation.isBatch) {
+      job.workstation = null
+    }
+
+    if (job.seq > 1) {
+  
+      if (prevJob.status !== 'CLOSED') {
+        job.status = 'PAUSED'
+      }
+  
+      if (nextJob) {
+        const nextJobQtyMade = nextJob.qtyOutput - nextJob.qtyReject + nextJob.qtyRework
+        const nextJobQtyDemand = nextJob.qtyInput - nextJob.qtyShortfall
+  
+        if (nextJobQtyMade >= nextJobQtyDemand) {
+          nextJob.status = 'CLOSED'
+
+          jobService.updateOne({
+            id: nextJob.id,
+            status: nextJob.status
+          })
+        }
+      }
+    }
+  }
+
+  if (forcePauseJob) {
+    job.status = 'PAUSED'
+  }
 
   const productionOrderStatus =
     jobs.some(job => job.status !== 'CLOSED')
@@ -43,29 +77,53 @@ export const createOne = (data, forcePauseProduction = false) => {
     status: productionOrderStatus
   }
 
-  if (forcePauseProduction) {
-    productionOrder.status = job.status = 'PAUSED'
-  }
-
   jobService.updateOne(job)
   productionOrderService.updateOne(productionOrder)
 
   return productionRecord
 }
 
+export const createMany = async (data) => {
+  data.forEach(async (productionRecord) => {
+    await createOne(productionRecord)
+  })
+}
+
 export const getAllBetweenTimestamps = (from, to) => {
   const ids = { from: ulid(Number(from)), to: ulid(Number(to)) }
+  const metafields = metafieldService.getAllByResource('OPERATION')
   const productionRecords = productionRecordRepository
     .findAllBetweenIds(ids)
     .map(transformToProductionRecordEntity)
+    .map(productionRecord => {
+      if (productionRecord.meta) {
+        Object.keys(productionRecord.meta).forEach(id => {
+          const { name } = metafields.find(metafield => id === metafield.id)
+          productionRecord.meta[id].label = name
+        })
+      }
+
+      return productionRecord
+    })
 
   return productionRecords
 }
 
 export const getAllByProductionOrder = (productionOrderId) => {
+  const metafields = metafieldService.getAllByResource('OPERATION')
   const productionRecords = productionRecordRepository
     .findAllByProductionOrderId(productionOrderId)
     .map(transformToProductionRecordEntity)
+    .map(productionRecord => {
+      if (productionRecord.meta) {
+        Object.keys(productionRecord.meta).forEach(id => {
+          const { name } = metafields.find(metafield => id === metafield.id)
+          productionRecord.meta[id].label = name
+        })
+      }
+
+      return productionRecord
+    })
 
   return productionRecords
 }
