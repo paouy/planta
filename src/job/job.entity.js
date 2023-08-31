@@ -6,6 +6,7 @@ const transformToJobEntity = (schema) => {
     product_sku,
     product_name,
     product_uom,
+    product_meta,
     operation_id,
     workstation_id,
     status,
@@ -20,6 +21,7 @@ const transformToJobEntity = (schema) => {
     operation_name,
     operation_time_per_cycle_mins = 0,
     operation_is_batch = false,
+    operation_batch_size_parameter,
     workstation_name,
     operation_batch_id
   } = schema
@@ -54,6 +56,15 @@ const transformToJobEntity = (schema) => {
   }
 
   if (operation_is_batch) {
+    if (product_meta) {
+      const productMeta = JSON.parse(product_meta)[operation_batch_size_parameter]
+
+      job.size = {
+        value: productMeta ? (productMeta.value * job.qtyInput) : job.qtyInput,
+        uom: productMeta ? productMeta.uom : (product_uom || 'units')
+      }
+    }
+
     job.timeEstimatedMins = operation_time_per_cycle_mins
   } else {
     job.timeEstimatedMins = job.qtyInput * Number(operation_time_per_cycle_mins)

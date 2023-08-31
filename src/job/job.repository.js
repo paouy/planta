@@ -181,9 +181,11 @@ const findAllWithProductionOrderNotReleased = ()=> {
       p.sku as product_sku,
       p.name as product_name,
       p.uom as product_uom,
+      p.meta as product_meta,
       o.name as operation_name,
       o.time_per_cycle_mins as operation_time_per_cycle_mins,
       o.is_batch as operation_is_batch,
+      o.batch_size_parameter as operation_batch_size_parameter,
       w.name as workstation_name,
       (pj.qty_output - pj.qty_reject + pj.qty_rework) as qty_input,
       obj.operation_batch_id
