@@ -90,8 +90,8 @@ const findAll = () => {
       c.name,
       m.id
     order by
-      m.name,
-      c.name
+      c.name,
+      m.name
   `)
 
   const results = statement.all()

@@ -46,8 +46,8 @@ const findAllByProductId = (productId) => {
     where
       pm.product_id = ?
     order by
-      m.name,
-      c.name
+      c.name,
+      m.name
   `)
 
   const results = statement.all(productId)
