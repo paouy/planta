@@ -122,8 +122,6 @@ const findAllBySalesOrderId = (salesOrderId) => {
           sales_order_item_id is not null
         and
           is_released = false
-        and
-          status != 'CANCELLED'
         group by
           sales_order_item_id
       ),
