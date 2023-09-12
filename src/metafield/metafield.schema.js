@@ -21,6 +21,10 @@ const mapToMetafieldSchema = (data) => {
     schema.attributes = JSON.stringify(data.attributes)
   }
 
+  if (data.position) {
+    schema.position = Number(data.position)
+  }
+
   return schema
 }
 

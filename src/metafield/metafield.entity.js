@@ -5,7 +5,8 @@ const transformToMetafieldEntity = (schema) => {
     key,
     type,
     resource,
-    attributes
+    attributes,
+    position
   } = schema
 
   const metafield = {
@@ -14,7 +15,8 @@ const transformToMetafieldEntity = (schema) => {
     key,
     type,
     resource,
-    attributes: JSON.parse(attributes)
+    attributes: JSON.parse(attributes),
+    position: Number(position)
   }
 
   return metafield

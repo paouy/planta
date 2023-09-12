@@ -11,14 +11,16 @@ const insertOne = (data) => {
         name,
         type,
         resource,
-        attributes
+        attributes,
+        position
       )
       values (
         @id,
         @name,
         @type,
         @resource,
-        @attributes
+        @attributes,
+        @position
       )
     returning
       *
@@ -37,7 +39,7 @@ const findAll = () => {
 }
 
 const findAllByResource = (resource) => {
-  const statement = sql('select * from metafields where resource like ? order by name')
+  const statement = sql('select * from metafields where resource like ? order by resource, position')
   const results = statement.all(`%${resource}%`)
 
   return results

@@ -207,6 +207,7 @@ if (!initialized) {
       'type' text not null,
       'resource' text not null,
       'attributes' text not null,
+      'position' integer not null,
       primary key('id')
     );
 
