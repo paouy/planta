@@ -1,6 +1,4 @@
-import { monotonicFactory, ulid } from 'ulidx'
-
-const monotonicUlid = monotonicFactory()
+import { ulid } from 'ulidx'
 
 const mapToProductionRecordSchema = (data) => {
   const schema = {
@@ -17,7 +15,7 @@ const mapToProductionRecordSchema = (data) => {
   if ('id' in data) {
     schema.id = data.id
   } else if ('timestamp' in data) {
-    schema.id = monotonicUlid(data.timestamp)
+    schema.id = ulid(data.timestamp)
   } else {
     schema.id = ulid()
   }
