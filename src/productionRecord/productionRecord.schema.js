@@ -1,8 +1,9 @@
-import { ulid } from 'ulidx'
+import { monotonicFactory, ulid } from 'ulidx'
+
+const monotonicUlid = monotonicFactory()
 
 const mapToProductionRecordSchema = (data) => {
   const schema = {
-    id: data.id || ulid(),
     production_order_id: data.productionOrderId,
     operation_id: data.operation.id,
     workstation_id: data.workstation?.id || null,
@@ -11,6 +12,14 @@ const mapToProductionRecordSchema = (data) => {
     type: data.type.toUpperCase(),
     qty: Number(data.qty),
     time_taken_mins: Number(data.timeTakenMins || 0)
+  }
+
+  if ('id' in data) {
+    schema.id = data.id
+  } else if ('timestamp' in data) {
+    schema.id = monotonicUlid(timestamp)
+  } else {
+    schema.id = ulid()
   }
 
   if ('meta' in data) {
