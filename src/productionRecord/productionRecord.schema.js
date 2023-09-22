@@ -17,7 +17,7 @@ const mapToProductionRecordSchema = (data) => {
   if ('id' in data) {
     schema.id = data.id
   } else if ('timestamp' in data) {
-    schema.id = monotonicUlid(timestamp)
+    schema.id = monotonicUlid(data.timestamp)
   } else {
     schema.id = ulid()
   }
