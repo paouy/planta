@@ -113,17 +113,45 @@ const findAllBySalesOrderId = (salesOrderId) => {
     with
       production as (
         select
-          sales_order_item_id,
-          count(id) as count,
-          sum(qty) as qty
+          po.sales_order_item_id,
+          sum(po.qty) as qty
         from
-          production_orders
+          production_orders po
+        left join
+          sales_order_items soi
+        on
+          po.sales_order_item_id = soi.id
+        left join
+          sales_orders so
+        on
+          so.id = @filter
         where
-          sales_order_item_id is not null
+          po.sales_order_item_id is not null
         and
-          is_released = false
+          po.is_released = false
+        and
+          po.status != 'CANCELLED'
         group by
-          sales_order_item_id
+          po.sales_order_item_id
+      ),
+      related_production_orders as (
+        select
+          po.sales_order_item_id,
+          count(po.id) as count
+        from
+          production_orders po
+        left join
+          sales_order_items soi
+        on
+          po.sales_order_item_id = soi.id
+        left join
+          sales_orders so
+        on
+          so.id = @filter
+        where
+          po.sales_order_item_id is not null
+        group by
+          po.sales_order_item_id
       ),
       fulfillment as (
         select
@@ -154,7 +182,7 @@ const findAllBySalesOrderId = (salesOrderId) => {
       p.sku as product_sku,
       p.name as product_name,
       p.uom as product_uom,
-      prd.count as production_order_count,
+      po.count as production_order_count,
       prd.qty as qty_wip,
       a.qty as qty_allocated,
       f.qty as qty_fulfilled
@@ -168,6 +196,10 @@ const findAllBySalesOrderId = (salesOrderId) => {
       production prd
     on
       soi.id = prd.sales_order_item_id
+    left join
+      related_production_orders po
+    on
+      soi.id = po.sales_order_item_id
     left join
       allocations a
     on
