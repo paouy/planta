@@ -92,7 +92,6 @@ out
 .nuxt
 dist
 bin
-public
 
 # Gatsby files
 .cache/
