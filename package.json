@@ -7,8 +7,7 @@
   "bin": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "prepare": "npx esbuild src/entry.js --bundle --platform=node --format=cjs --outfile=dist/index.js",
-    "build": "npx pkg ."
+    "build": "npx esbuild src/entry.js --bundle --platform=node --format=cjs --outfile=dist/index.js && npx pkg ."
   },
   "devDependencies": {
     "esbuild": "^0.19.3",
