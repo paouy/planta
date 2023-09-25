@@ -4,15 +4,21 @@
   "private": "true",
   "type": "module",
   "main": "src/index.js",
+  "bin": "dist/index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "prepare": "npx esbuild src/entry.js --bundle --platform=node --format=cjs --outfile=dist/index.js",
+    "build": "npx pkg ."
   },
   "devDependencies": {
+    "esbuild": "^0.19.3",
     "nodemon": "^3.0.1",
-    "pino-pretty": "^10.2.0"
+    "pino-pretty": "^10.2.0",
+    "pkg": "^5.8.1"
   },
   "dependencies": {
     "@fastify/cors": "^8.3.0",
+    "@fastify/static": "^6.11.2",
     "bcryptjs": "^2.4.3",
     "better-sqlite3": "^8.5.0",
     "dotenv": "^16.3.1",
@@ -20,5 +26,15 @@
     "fastify-plugin": "^4.5.1",
     "jsonwebtoken": "^9.0.1",
     "ulidx": "^2.1.0"
+  },
+  "pkg": {
+    "targets": [
+      "node18-win-x64"
+    ],
+    "outputPath": "bin",
+    "assets": [
+      "node_modules/better-sqlite3/build/Release/*",
+      "public/**"
+    ]
   }
 }

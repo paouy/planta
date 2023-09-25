@@ -1,7 +1,9 @@
 import { DB_PATH } from './config.js'
 import Database from 'better-sqlite3'
 
-const db = new Database(DB_PATH)
+const db = new Database(DB_PATH, {
+  nativeBinding: 'C:/snapshot/planta/node_modules/better-sqlite3/build/Release/better_sqlite3.node'
+})
 const sql = db.prepare.bind(db)
 const txn = db.transaction.bind(db)
 
